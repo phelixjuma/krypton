@@ -28,7 +28,7 @@ final class Config
 
     const MAX_FILE_SIZE = 200000;
 
-    const DEFAULT_PAGE = 'home';
+    const DEFAULT_PAGE = '404';
     const CONTROLLERS_DIR = 'Controllers/';
     const VIEWS_DIR = 'Views/';
     const LAYOUT_DIR = 'Layout/';
