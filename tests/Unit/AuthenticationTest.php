@@ -2,7 +2,8 @@
 
 namespace Kuza\Krypton\Tests\Unit;
 
-use Kuza\Krypton\Classes\JWTTokenException;
+use Kuza\Krypton\Exceptions\CustomException;
+use Kuza\Krypton\Exceptions\JWTTokenException;
 use PHPUnit\Framework\TestCase;
 
 class AuthenticationTest extends TestCase {
@@ -28,7 +29,7 @@ class AuthenticationTest extends TestCase {
 
             $this->authentication = new \Kuza\Krypton\Classes\Authentication($jwt);
 
-        } catch (\Kuza\Krypton\Classes\CustomException $exception) {
+        } catch (CustomException $exception) {
             print $exception->getMessage();
         }
     }
@@ -36,7 +37,7 @@ class AuthenticationTest extends TestCase {
     /**
      * test if a country exists using kenya as an example
      *
-     * @throws JWTTokenException
+     * @throws \Kuza\Krypton\Exceptions\JWTTokenException
      */
     public function testInvalidToken() {
         $token = "qvbg";

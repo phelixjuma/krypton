@@ -90,9 +90,8 @@ final class Data {
 
     /**
      * Implements PHP's uasort in a stable way
-     * @param array $array
-     * @param object $cmp_public static function
-     * @return null
+     * @param $array
+     * @param $cmp_function
      */
     public static function stableuasort(&$array, $cmp_function) {
         if (count($array) < 2) {
@@ -134,9 +133,8 @@ final class Data {
 
     /**
      * Implement stable php usort public static function
-     * @param type $array
-     * @param type $cmp_public static function
-     * @return type
+     * @param $array
+     * @param $cmp_function
      */
     public static function stableusort(&$array, $cmp_function) {
         // Arrays of size < 2 require no action.
@@ -194,7 +192,7 @@ final class Data {
      * @return String
      */
     public static function formatPhoneNumber($phoneNumber, $countryCode = "+254") {
-        //check if the first 4 charcaters are the same as the country code.
+        //check if the first 4 characaters are the same as the country code.
         if (substr($phoneNumber, 0, 4) == $countryCode) {
             return $phoneNumber;
         }
@@ -260,33 +258,6 @@ final class Data {
     }
 
     /**
-     * public static function to purify text.
-     * It implements HTMLPurifier php library to clean text and hence prevents threats such as XSS
-     * @param string $text  The text to purify
-     * @return string
-     */
-    public static function purifyText($text) {
-        require_once(MEALTIME_LIBRARIES_DIR . 'htmlpurifier/HTMLPurifier.auto.php');
-
-        $config = \HTMLPurifier_Config::createDefault();
-
-        $config->set('Core.Encoding', 'UTF-8'); // replace with your encoding
-        $config->set('HTML', 'AllowedElements', 'a,b,strong,span,u,i,em,br,p,pre,code,ol,ul,li,img,table,tr,td,thead,tbody,tfoot');
-        $config->set('HTML', 'AllowedAttributes', 'a.href,a.title,a.target,a.rel,span.style,pre.class,p.style,img.src,table.border,table.style,td.style');
-
-        $purifier = new \HTMLPurifier($config);
-
-        $pure_text = $purifier->purify($text);
-
-        $pure_text = trim($pure_text);
-        $pure_text = addslashes($pure_text);
-        $pure_text = htmlspecialchars($pure_text);
-        $pure_text = htmlentities($pure_text);
-
-        return $pure_text;
-    }
-
-    /**
      * Format text
      * @param string $content
      * @return string
@@ -327,7 +298,7 @@ final class Data {
      */
     public static function jsonEncode($data) {
         //do not encode json strings
-        if (!is_array($data) && jsonDecode($data) !== null) {
+        if (!is_array($data) && self::jsonDecode($data) !== null) {
             return $data;
         }
 
@@ -343,7 +314,7 @@ final class Data {
     /**
      * Decode json data. A better implementation of PHP's json_decode function
      * @param String . A json string to decode
-     * @return type all data types depending on what was encode
+     * @return array all data types depending on what was encode
      */
     public static function jsonDecode($data) {
         return json_decode($data, true);
@@ -432,9 +403,9 @@ final class Data {
     /**
      * Filter an array.
      * Searches for the array components that have a key with the specified value
-     * @param $source the source array
-     * @param $key the key to check
-     * @param $val the value to search for
+     * @param  array $source the source array
+     * @param string $key the key to check
+     * @param string $val the value to search for
      * @return array
      */
     public static function getFiltered($source,$key,$val) {
@@ -452,8 +423,8 @@ final class Data {
 
     /**
      * Get a specific array data from an array
-     * @param $data the array to search
-     * @param $key the key to search for
+     * @param array $data the array to search
+     * @param string $key the key to search for
      * @param bool $as_number
      * @param null $default
      * @return null
@@ -652,5 +623,18 @@ final class Data {
      */
     public static function numericValueBetweenClosed($data, $startValue, $endValue) {
         return $data >= $startValue && $data <= $endValue;
+    }
+
+    /**
+     * @param object $object
+     * @param array $array
+     */
+    public static function mapArrayToObject(&$object, array $array) {
+
+        foreach ($array as $key => $value) {
+            if (isset($object->$key)) {
+                $object->$key = $value;
+            }
+        }
     }
 }
