@@ -1,0 +1,39 @@
+{
+    "name": "kuza/krypton",
+    "description": "Kuza Krypton Framework core libraries",
+    "keywords": ["kuza", "package"],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Phelix Juma",
+            "email": "jumaphelix@kuzalab.com"
+        },
+        {
+            "name": "Allan Otieno",
+            "email": "allan@kuzalab.com"
+        }
+    ],
+    "type": "package",
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "require": {
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "ext-iconv": "*",
+        "firebase/php-jwt": "^5.0",
+        "phpmailer/phpmailer": "^5.0",
+        "aws/aws-sdk-php": "^3.81",
+        "guzzlehttp/guzzle": "^6.3",
+        "africastalking/africastalking": "^2.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Krypton\\": "src/"
+        }
+    }
+}
