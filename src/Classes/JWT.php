@@ -13,11 +13,13 @@ use Kuza\Krypton\Config\Config;
 class JWT {
 
     //RSA Keys
-    const JWT_RSA_PRIVATE_KEY = "ibuild-jwt-rsa-private.key";
-    const JWT_RSA_PUBLIC_KEY = "ibuild-jwt-rsa-public.key";
+    private $private_key_file = "";
+    private $public_key_file = "";
 
     private $privateKey;
     private $publicKey;
+
+    private $expiry_duration = 3600; // defaults to 1 hour
 
     private $issuer ;
     private $audience;
@@ -36,15 +38,12 @@ class JWT {
      */
     public function __construct() {
 
-        $this->publicKey = $this->getRSAPublicKey();
-        $this->privateKey = $this->getRSAPrivateKey();
-
         $this->issuer = Config::getSiteURL();
         $this->audience = Config::getSiteURL();
         $this->secret = Config::getJWTSecret();
         $this->issuedAt = Dates::getTimestamp();
         $this->notBefore = Dates::getTimestamp();
-        $this->expiry = time()+(3600*24*30*12); //expires after 12 months
+        $this->expiry = time()+$this->expiry_duration;
         
         $this->payload = array(
             "iss"   => $this->issuer,
@@ -57,11 +56,27 @@ class JWT {
     }
 
     /**
-     * Get the directory where the RSA Keys reside
-     * @return string
+     * Set the file path to the public key
+     * @param $filePath
      */
-    private function getKeysDirectory() {
-        return dirname(__DIR__).'/Keys/';
+    public function setPublicKeyFile($filePath) {
+        $this->public_key_file = $filePath;
+    }
+
+    /**
+     * Set the file path to the private key
+     * @param $filePath
+     */
+    public function setPrivateKeyFile($filePath) {
+        $this->private_key_file = $filePath;
+    }
+
+    /**
+     * Set the expiry duration in seconds
+     * @param $duration
+     */
+    public function setExpiryDuration($duration) {
+        $this->expiry_duration = $duration;
     }
 
     /**
@@ -69,8 +84,7 @@ class JWT {
      * @return bool|string
      */
     private function getRSAPublicKey() {
-        $publicKeyFile = $this->getKeysDirectory().self::JWT_RSA_PUBLIC_KEY;
-        return file_get_contents($publicKeyFile);
+        return file_get_contents($this->public_key_file);
     }
 
     /**
@@ -78,8 +92,7 @@ class JWT {
      * @return bool|string
      */
     private function getRSAPrivateKey() {
-        $privateKey = $this->getKeysDirectory().self::JWT_RSA_PRIVATE_KEY;
-        return file_get_contents($privateKey);
+        return file_get_contents($this->private_key_file);
     }
 
     /**
@@ -88,6 +101,8 @@ class JWT {
      * @throws CustomException
      */
     public function generateToken($userId) {
+
+        $this->privateKey = $this->getRSAPrivateKey();
 
         $this->payload['id'] = $userId;
 
@@ -102,13 +117,16 @@ class JWT {
      * Decode a JWT token
      * @param $token
      * @return array
-     * @throws CustomException
+     * @throws JWTTokenException
      */
     public function decodeToken($token) {
+
+        $this->publicKey = $this->getRSAPublicKey();
+
         try {
             $decoded = \Firebase\JWT\JWT::decode($token, $this->publicKey, array('RS256'));
         } catch(\Exception $e) {
-            throw new CustomException($e->getMessage(),Requests::RESPONSE_INTERNAL_SERVER_ERROR);
+            throw new JWTTokenException($e->getMessage(),Requests::RESPONSE_INTERNAL_SERVER_ERROR);
         }
 
         return (array) $decoded;

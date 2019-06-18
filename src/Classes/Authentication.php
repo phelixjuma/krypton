@@ -8,8 +8,6 @@
 
 namespace Kuza\Krypton\Classes;
 
-use Krypton\Classes\JWT;
-
 class Authentication {
 
     protected $JWT;
@@ -31,7 +29,7 @@ class Authentication {
     /**
      * Authenticate the user via JWT
      * @param $token
-     * @throws CustomException
+     * @throws JWTTokenException
      */
     public function JWTAuthentication($token)
     {
@@ -41,14 +39,14 @@ class Authentication {
 
             //check that the uuid is provided in the token
             if (!isset($decodedToken['id']) || empty($decodedToken['id'])) {
-                throw new CustomException("Invalid Token", Requests::RESPONSE_UNAUTHORIZED);
+                throw new InvalidJWTTokenException("Invalid Token", Requests::RESPONSE_UNAUTHORIZED);
             }
 
             //we set the user
             $this->userId = $decodedToken['id'];
 
         } catch (\Exception $e) {
-            throw new CustomException($e->getMessage(), Requests::RESPONSE_UNAUTHORIZED);
+            throw new JWTTokenException($e->getMessage(), Requests::RESPONSE_UNAUTHORIZED);
         }
     }
 }

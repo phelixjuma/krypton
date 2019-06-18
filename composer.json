@@ -1,6 +1,6 @@
 {
     "name": "kuza/krypton",
-    "description": "Kuza Krypton Framework core libraries",
+    "description": "Kuza Krypton core libraries",
     "keywords": ["kuza", "package"],
     "license": "Apache-2.0",
     "authors": [
@@ -29,7 +29,7 @@
         "africastalking/africastalking": "^2.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.2"
+        "phpunit/phpunit": "6.*"
     },
     "autoload": {
         "psr-4": {

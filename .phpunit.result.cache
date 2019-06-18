@@ -1,1 +1,1 @@
-C:37:"PHPUnit\Runner\DefaultTestResultCache":118:{a:2:{s:7:"defects";a:1:{s:23:"AppTest::testAppCreated";i:4;}s:5:"times";a:1:{s:23:"AppTest::testAppCreated";d:0.108;}}}
+C:37:"PHPUnit\Runner\DefaultTestResultCache":210:{a:2:{s:7:"defects";a:2:{s:23:"AppTest::testAppCreated";i:4;s:32:"CountriesTest::testCountryExists";i:4;}s:5:"times";a:2:{s:23:"AppTest::testAppCreated";d:0.108;s:32:"CountriesTest::testCountryExists";d:0.003;}}}
