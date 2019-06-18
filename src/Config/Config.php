@@ -8,7 +8,7 @@
 
 namespace Kuza\Krypton\Config;
 
-use Kuza\Krypton\Classes\ConfigurationException;
+use Kuza\Krypton\Exceptions\ConfigurationException;
 use Kuza\Krypton\Classes\Requests;
 use Kuza\Krypton\Classes\Utils;
 

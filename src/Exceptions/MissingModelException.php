@@ -6,12 +6,12 @@
  * @package Kuzalab
  */
 
-namespace Kuza\Krypton\Classes;
+namespace Kuza\Krypton\Exceptions;
 
 use \Exception;
 
 
-class JWTTokenException extends Exception {
+class MissingModelException extends Exception {
 
     /**
      * Redefine the exception so message isn't optional

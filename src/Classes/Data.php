@@ -20,8 +20,8 @@ final class Data {
 
     /**
      * Get the last key of an array
-     * @param type $array
-     * @return type
+     * @param  $array
+     * @return
      */
     public static function getLastArrayKey($array) {
         return count($array) - 1;

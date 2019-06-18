@@ -6,12 +6,12 @@
  * @package Kuzalab
  */
 
-namespace Kuza\Krypton\Classes;
+namespace Kuza\Krypton\Exceptions;
 
 use \Exception;
 
 
-class ConfigurationException extends Exception {
+class MissingControllerException extends Exception {
 
     /**
      * Redefine the exception so message isn't optional

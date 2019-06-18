@@ -9,6 +9,8 @@
 namespace Kuza\Krypton\Classes;
 
 use Kuza\Krypton\Config\Config;
+use Kuza\Krypton\Exceptions\CustomException;
+use Kuza\Krypton\Exceptions\JWTTokenException;
 
 class JWT {
 

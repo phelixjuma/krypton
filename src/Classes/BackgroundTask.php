@@ -9,7 +9,7 @@
 
 namespace Kuza\Krypton\Classes;
 
-final class Backgroundtask {
+final class BackgroundTask {
 
     /**
      * This is the function to start the background task.
@@ -38,7 +38,7 @@ final class Backgroundtask {
             if (count(preg_split("/\n/", $result)) > 2 && !preg_match('/ERROR: Process ID out of range/', $result)) {
                 return true;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
         return false;
@@ -59,7 +59,7 @@ final class Backgroundtask {
             if (!preg_match('/No such process/', $result)) {
                 return true;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
         return false;

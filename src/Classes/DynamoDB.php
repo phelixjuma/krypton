@@ -28,7 +28,6 @@ class DynamoDB {
 
     /**
      * DynamoDB constructor.
-     * @throws CustomException
      */
     public function __construct() {
         $this->credentials = new Credentials(Config::getAWSAccessKey(), Config::getAWSAccessSecret());

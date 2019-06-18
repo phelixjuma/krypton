@@ -8,6 +8,9 @@
 
 namespace Kuza\Krypton\Classes;
 
+use Kuza\Krypton\Exceptions\InvalidJWTTokenException;
+use Kuza\Krypton\Exceptions\JWTTokenException;
+
 class Authentication {
 
     protected $JWT;

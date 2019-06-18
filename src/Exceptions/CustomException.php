@@ -6,7 +6,7 @@
  * @package Kuzalab
  */
 
-namespace Kuza\Krypton\Classes;
+namespace Kuza\Krypton\Exceptions;
 
 use \Exception;
 

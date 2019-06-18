@@ -9,6 +9,7 @@
 
 namespace Kuza\Krypton\Classes;
 
+use Kuza\Krypton\Exceptions\CustomException;
 use Kuza\UserDataCapture\Location;
 use Kuza\UserDataCapture\Request;
 use Kuza\UserDataCapture\UserAgent;
@@ -188,7 +189,7 @@ final class Logger {
         $tpMessage = "
 		" . DATE('Y-m-d H:i:s', time()) . "<br>
                 " . $section . "<br>
-		" . jsonEncode($data) . "<br><br>
+		" . jsonDecode($data) . "<br><br>
 	";
         if (file_put_contents(TEST_POINT_LOGS, $tpMessage, FILE_APPEND | LOCK_EX)) {
             return true;

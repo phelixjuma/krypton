@@ -13,7 +13,7 @@ use Kuza\Krypton\Config\Config;
 
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
-use Firebase\Auth\Token\Exception\InvalidToken;
+use Kuza\Krypton\Exceptions\CustomException;
 
 /**
  * Handle Firebase functions
@@ -102,31 +102,28 @@ final class Firebase {
     /**
      * Delete a user from firebase
      * @param $uid
-     * @return mixed
      */
     public function deleteUser($uid) {
-        return $this->auth->deleteUser($uid);
+        $this->auth->deleteUser($uid);
     }
 
     /**
      * Send email verification email
      * @param $uid
-     * @return mixed
      */
     public function sendEmailVerificationEmail($uid) {
         $redirectTo = "";
 
-        return $this->auth->sendEmailVerification($uid,$redirectTo);
+        $this->auth->sendEmailVerification($uid,$redirectTo);
     }
 
     /**
      * Send password reset email to the user
      * @param $email
-     * @return mixed
      */
     public function sendPasswordResetEmail($email) {
         $redirectTo = "";
 
-        return $this->auth->sendPasswordResetEmail($email,$redirectTo);
+        $this->auth->sendPasswordResetEmail($email,$redirectTo);
     }
 }

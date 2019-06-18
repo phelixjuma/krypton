@@ -13,6 +13,7 @@ use Aws\S3\Exception\S3Exception;
 use Kuza\Krypton\Config\Config;
 use Aws\Credentials\Credentials;
 use Aws\S3\S3Client;
+use Kuza\Krypton\Exceptions\CustomException;
 
 /**
  * Class for managing uploads to S3
@@ -27,7 +28,6 @@ class S3 {
 
     /**
      * S3 constructor.
-     * @throws CustomException
      */
     public function __construct() {
         $this->credentials = new Credentials(Config::getAWSAccessKey(), Config::getAWSAccessSecret());
