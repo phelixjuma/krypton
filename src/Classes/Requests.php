@@ -342,7 +342,7 @@ final class Requests {
         header('Vary', 'Origin');
 
         // Specify which request methods are allowed
-        header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE');
+        header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 
         // Additional headers which may be sent along with the CORS request
         header('Access-Control-Allow-Headers: X-Requested-With , Content-Type , Authorization, Business, Role');
