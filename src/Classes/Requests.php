@@ -356,39 +356,38 @@ final class Requests {
 
     /**
      * Send response
-     * @param $responseData
      */
-    public function sendResponse($responseData) {
+    public function sendResponse() {
 
         header("Content-Type: application/json;charset=utf-8");//only send json data
 
-        if (!isset($responseData['code'])) {
-            $responseData['code'] = 200;
+        if (!isset($this->apiData['code'])) {
+            $this->apiData['code'] = 200;
         }
 
-        http_response_code($responseData['code']);
+        http_response_code($this->apiData['code']);
 
-        if($responseData['code'] != 204) {
+        if($this->apiData['code'] != 204) {
 
-            $responseData = [
-                "success"   => isset($responseData['success']) ? $responseData['success'] : false,
-                "message"   => isset($responseData['message']) ? $responseData['message'] : "",
-                "data"      => isset($responseData['data']) ? $responseData['data'] : null,
+            $this->apiData = [
+                "success"   => isset($this->apiData['success']) ? $this->apiData['success'] : false,
+                "message"   => isset($this->apiData['message']) ? $this->apiData['message'] : "",
+                "data"      => isset($this->apiData['data']) ? $this->apiData['data'] : null,
                 "meta"      =>  [
                     "no_of_records" => 0,
-                    "total_records" => isset($responseData['total_records']) && !is_null($responseData['total_records']) ? $responseData['total_records'] : 0
+                    "total_records" => isset($this->apiData['total_records']) && !is_null($this->apiData['total_records']) ? $this->apiData['total_records'] : 0
                 ]
             ];
 
-            if (substr($responseData['code'],0,1) == '2') {
-                // $responseData['success'] = true;
+            if (substr($this->apiData['code'],0,1) == '2') {
+                // $this->apiData['success'] = true;
 
-                if (!is_null($responseData['data'])) {
-                    $responseData['meta']['no_of_records'] = is_array($responseData['data']) ? sizeof($responseData['data']) : 1;
+                if (!is_null($this->apiData['data'])) {
+                    $this->apiData['meta']['no_of_records'] = is_array($this->apiData['data']) ? sizeof($this->apiData['data']) : 1;
                 }
             }
 
-            echo json_encode($responseData);
+            echo json_encode($this->apiData);
         }
         // we terminate the code
         exit;
