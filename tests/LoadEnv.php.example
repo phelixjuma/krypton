@@ -31,7 +31,7 @@ $_ENV['MAIL_PORT']       = "587";
 
 // AWS Configs
 $_ENV['AWS_ACCESS_KEY']              = "";
-$_ENV['AWS_SECRET_KEY']              = "/DzOLZ4fUEVNi";
+$_ENV['AWS_SECRET_KEY']              = "";
 $_ENV['S3_BUCKET_NAME']              =   "";
 $_ENV['CLOUDFRONT_URL']              =   "";
 $_ENV['CLOUDFRONT_KEY_PAIR_ID']      =   "";
