@@ -643,7 +643,7 @@ final class Data {
      * @param $object
      * @return mixed
      */
-    public static function objectToArray($object) {
+    public static function mapObjectToArray($object) {
         return  json_decode(json_encode($object), true);
     }
 }
