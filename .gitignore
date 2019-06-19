@@ -1,9 +1,8 @@
 /vendor/*
-tests/*
+tests/LoadEnv.php
+tests/keys/*
 /.idea/*
 /.idea/workspace.xml
 .DS_Store
 .env
-
-!tests/LoadEnv.php
-!tests/keys/*
+.phpunit.result.cache
