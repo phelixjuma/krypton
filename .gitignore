@@ -1,8 +1,9 @@
 /vendor/*
-/tests/keys/*
+tests/*
 /.idea/*
 /.idea/workspace.xml
 .DS_Store
 .env
 
-!/tests/LoadEnv.php
+!tests/LoadEnv.php
+!tests/keys/*
