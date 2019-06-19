@@ -637,4 +637,13 @@ final class Data {
             }
         }
     }
+
+    /**
+     * Convert an objec to an array
+     * @param $object
+     * @return mixed
+     */
+    public static function objectToArray($object) {
+        return  json_decode(json_encode($object), true);
+    }
 }
