@@ -9,6 +9,7 @@
 namespace Kuza\Krypton\Classes;
 
 use Kuza\Krypton\Config\Config;
+use Kuza\Krypton\Exceptions\ConfigurationException;
 use Kuza\Krypton\Exceptions\CustomException;
 use Kuza\Krypton\Exceptions\JWTTokenException;
 
@@ -36,7 +37,7 @@ class JWT {
 
     /**
      * JWT constructor.
-     * @throws CustomException
+     * @throws ConfigurationException
      */
     public function __construct() {
 
