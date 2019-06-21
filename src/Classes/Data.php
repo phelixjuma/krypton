@@ -632,7 +632,7 @@ final class Data {
     public static function mapArrayToObject(&$object, array $array) {
 
         foreach ($array as $key => $value) {
-            if (isset($object->$key)) {
+            if (property_exists($object, $key)) {
                 $object->$key = $value;
             }
         }
