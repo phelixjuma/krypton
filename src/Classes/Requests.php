@@ -11,6 +11,7 @@ namespace Kuza\Krypton\Classes;
 
 use Kuza\Krypton\Config\Config;
 use Kuza\Krypton\Exceptions\ConfigurationException;
+use Kuza\Krypton\Exceptions\HttpException;
 
 /**
  * Requests class methods.
@@ -391,5 +392,47 @@ final class Requests {
         }
         // we terminate the code
         exit;
+    }
+
+    /**
+     * Send a curl request
+     * @param $endpoint
+     * @param $headers
+     * @param $type
+     * @param array $body
+     * @return array
+     * @throws HttpException
+     */
+    public static function sendCurlRequest($endpoint, $headers, $type, $body = array()) {
+
+        try {
+            $ch = curl_init();
+
+            curl_setopt($ch, CURLOPT_POST, false);
+            if ($type == 'post') {
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+            }
+            curl_setopt($ch, CURLOPT_URL, $endpoint);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            $response = curl_exec($ch);
+            $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if (FALSE == $response || null == $response) {
+                throw new HttpException("Curl failed for the request: $type $endpoint");
+            }
+
+            return [
+                "status"    => $status,
+                "body"      => $response
+            ];
+
+        } catch (\Exception $e) {
+            throw new HttpException($e->getMessage(), $e->getCode());
+        }
     }
 }
