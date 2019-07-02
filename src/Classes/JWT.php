@@ -53,7 +53,6 @@ class JWT {
             "aud"   => $this->audience,
             "iat"   => $this->issuedAt,
             "nbf"   => $this->notBefore,
-            "exp"   => $this->expiry,
             "jti"   => $this->secret
         );
     }
@@ -108,6 +107,7 @@ class JWT {
         $this->privateKey = $this->getRSAPrivateKey();
 
         $this->payload['id'] = $userId;
+        $this->payload["exp"] = $this->expiry;
 
         try {
             $this->jwtToken = \Firebase\JWT\JWT::encode($this->payload, $this->privateKey, 'RS256');
