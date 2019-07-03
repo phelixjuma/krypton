@@ -22,7 +22,7 @@ class JWT {
     private $privateKey;
     private $publicKey;
 
-    private $expiry_duration = 3600; // defaults to 1 hour
+    private $expiry_duration = 86400 * 100; // defaults to 100 days
 
     private $issuer ;
     private $audience;
@@ -46,15 +46,6 @@ class JWT {
         $this->secret = Config::getJWTSecret();
         $this->issuedAt = Dates::getTimestamp();
         $this->notBefore = Dates::getTimestamp();
-        $this->expiry = time()+$this->expiry_duration;
-        
-        $this->payload = array(
-            "iss"   => $this->issuer,
-            "aud"   => $this->audience,
-            "iat"   => $this->issuedAt,
-            "nbf"   => $this->notBefore,
-            "jti"   => $this->secret
-        );
     }
 
     /**
@@ -106,8 +97,17 @@ class JWT {
 
         $this->privateKey = $this->getRSAPrivateKey();
 
-        $this->payload['id'] = $userId;
-        $this->payload["exp"] = $this->expiry;
+        $this->expiry = time() + (1000 * $this->expiry_duration);
+
+        $this->payload = array(
+            "iss"   => $this->issuer,
+            "aud"   => $this->audience,
+            "iat"   => $this->issuedAt,
+            "nbf"   => $this->notBefore,
+            "jti"   => $this->secret,
+            "exp"   => $this->expiry,
+            "id"    => $userId
+        );
 
         try {
             $this->jwtToken = \Firebase\JWT\JWT::encode($this->payload, $this->privateKey, 'RS256');
