@@ -394,4 +394,29 @@ final class Utils {
         }
         return $res;
     }
+
+    /**
+     * Checks to see if the number provided is Mtn Compatible
+     * @param $phoneNumber
+     * @return bool
+     */
+    public static function checkMtnUgandaNumber($phoneNumber){
+        $array = [
+            "2567"
+        ];
+
+        $i = 0;
+        foreach ($array as $arr){
+            if(preg_match("/^".$arr."/",$phoneNumber)){
+                $i++;
+            }
+        }
+
+        if ($i >= 1){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
 }
