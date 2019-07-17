@@ -424,7 +424,7 @@ final class Utils {
      * Generates UUID v4
      * @return string
      */
-    public function genUuidv4() {
+    public static function genUuidv4() {
         return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
             mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
