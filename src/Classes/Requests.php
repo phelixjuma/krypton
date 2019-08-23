@@ -97,7 +97,7 @@ final class Requests {
     public $isConnect = false;
     public $headers;
 
-    private $isBenchmark = false;
+    public $isBenchmark = false;
 
     public $ip_address;
     public $user_agent;
@@ -107,7 +107,8 @@ final class Requests {
         "message"       => "",
         "data"          => null,
         "total_records" => 0,
-        "code"          =>  200
+        "code"          =>  200,
+        "benchmark"     => []
     ];
 
     /**
