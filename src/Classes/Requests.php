@@ -375,6 +375,7 @@ final class Requests {
                 "success"   => isset($this->apiData['success']) ? $this->apiData['success'] : false,
                 "message"   => isset($this->apiData['message']) ? $this->apiData['message'] : "",
                 "data"      => isset($this->apiData['data']) ? $this->apiData['data'] : null,
+                "benchmark" => isset($this->apiData['benchmark']) ? $this->apiData['benchmark'] : [],
                 "meta"      =>  [
                     "no_of_records" => 0,
                     "total_records" => isset($this->apiData['total_records']) && !is_null($this->apiData['total_records']) ? $this->apiData['total_records'] : 0
