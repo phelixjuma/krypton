@@ -62,12 +62,14 @@ abstract class DBHandler {
      * @param \PDO|null $db
      * @return \PDO
      */
-//    public function adapter(\PDO $db=null) {
-//
+    public function adapter(
+//        \PDO $db=null
+    ) {
+
 //        $this->db = $db? $db : $this->db;
-//
-//        return $this->db;
-//    }
+
+        return $this->db;
+    }
 
     /**
      * Prepare the model.
