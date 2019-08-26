@@ -34,14 +34,17 @@ abstract class DBHandler {
     private $table_meta;
 
     /**
-     * DBHandler constructor.
-     * @param string $tableName
+     * @var \PDO $pdo
      */
-    public function __construct($tableName="") {
+    protected $pdo;
 
-        if(!empty($tableName)) {
-            $this->table($tableName);
-        }
+    /**
+     * DBHandler constructor.
+     * @param \PDO $pdo
+     */
+    public function __construct(\PDO $pdo) {
+
+        $this->pdo = $pdo;
 
         $this->prepareModel();
     }
@@ -59,10 +62,12 @@ abstract class DBHandler {
      * @param \PDO|null $db
      * @return \PDO
      */
-    public function adapter(\PDO $db=null) {
-        $this->db = $db? $db : $this->db;
-        return $this->db;
-    }
+//    public function adapter(\PDO $db=null) {
+//
+//        $this->db = $db? $db : $this->db;
+//
+//        return $this->db;
+//    }
 
     /**
      * Prepare the model.
@@ -70,27 +75,38 @@ abstract class DBHandler {
      */
     protected function prepareModel() {
 
-        try {
+        $this->db = $this->pdo ? $this->pdo : $this->db;
 
-            $source = Config::getSource();
-            $user = Config::getDBUser();
-            $password = Config::getDBPassword();
-            $pdo = new \PDO($source,$user,$password);
-            $this->addDbAdapter($pdo);
+        $this->setKeys();
+        $this->setColumns();
 
-            $this->setKeys();
-            $this->setColumns();
-            $this->adapter()->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        }
-        catch (\Exception $ex) {
-            $title = 'Connection Failed';
-            switch ($ex->getCode()){
-                case 2002: $message = 'Attempt to Connect to database failed'; break;
-                default: $message = $ex->getMessage(); break;
-            }
-            $response = json_encode(['message'=>$message,'title'=>$title,'status'=>'error']);
-            die($response);
-        }
+        $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+//        $this->addDbAdapter($this->pdo);
+
+//        $this->adapter()->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+//        try {
+//
+//            $source = Config::getSource();
+//            $user = Config::getDBUser();
+//            $password = Config::getDBPassword();
+//            $pdo = new \PDO($source,$user,$password);
+//            $this->addDbAdapter($pdo);
+//
+//            $this->setKeys();
+//            $this->setColumns();
+//            $this->adapter()->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+//        }
+//        catch (\Exception $ex) {
+//            $title = 'Connection Failed';
+//            switch ($ex->getCode()){
+//                case 2002: $message = 'Attempt to Connect to database failed'; break;
+//                default: $message = $ex->getMessage(); break;
+//            }
+//            $response = json_encode(['message'=>$message,'title'=>$title,'status'=>'error']);
+//            die($response);
+//        }
 
     }
 

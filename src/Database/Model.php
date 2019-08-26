@@ -9,13 +9,18 @@ class Model extends DBHandler {
 
 
     /**
-     * Models constructor.
-     * @param string $tableName
+     * Model constructor.
+     * @param \PDO $pdo
+     * @param string $table
      */
-    public function __construct($tableName="") {
-        parent::__construct($tableName);
-    }
+    public function __construct(\PDO $pdo, $table = "") {
 
+        parent::__construct($pdo);
+
+        if (!empty($table)) {
+            $this->table($table);
+        }
+    }
 
     /**
      * Prepare insert data
