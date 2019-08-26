@@ -13,13 +13,10 @@ class Model extends DBHandler {
      * @param \PDO $pdo
      * @param string $table
      */
-    public function __construct(\PDO $pdo, $table = "") {
+    public function __construct(\PDO $pdo, $table = null) {
 
-        parent::__construct($pdo);
+        parent::__construct($pdo, $table);
 
-        if (!empty($table)) {
-            $this->table($table);
-        }
     }
 
     /**

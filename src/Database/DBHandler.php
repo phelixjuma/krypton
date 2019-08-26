@@ -41,10 +41,13 @@ abstract class DBHandler {
     /**
      * DBHandler constructor.
      * @param \PDO $pdo
+     * @param null $table
      */
-    public function __construct(\PDO $pdo) {
+    public function __construct(\PDO $pdo, $table = null) {
 
         $this->pdo = $pdo;
+
+        $this->table($table);
 
         $this->prepareModel();
     }
