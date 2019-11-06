@@ -402,7 +402,7 @@ final class Requests {
             echo json_encode($this->apiData);
         }
         // we terminate the code
-        exit;
+        //exit;
     }
 
     /**
