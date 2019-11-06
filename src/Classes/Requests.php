@@ -381,6 +381,7 @@ final class Requests {
         if($this->apiData['code'] != 204) {
 
             $this->apiData = [
+                "status_code"      => $this->apiData['code'],
                 "success"   => isset($this->apiData['success']) ? $this->apiData['success'] : false,
                 "message"   => isset($this->apiData['message']) ? $this->apiData['message'] : "",
                 "data"      => isset($this->apiData['data']) ? $this->apiData['data'] : null,
