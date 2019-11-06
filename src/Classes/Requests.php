@@ -219,12 +219,16 @@ final class Requests {
 
     /**
      * Set the query parameters
+     * @param string $queryParams
      */
-    public function setQueryParameters() {
+    public function setQueryParameters($queryParams = "") {
         //initialize the query
         $filters = [];
         //we get the url query parameters
-        $urlQueryParams = explode("&", parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY));
+
+        $params = !empty($queryParams) ? $queryParams : parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
+
+        $urlQueryParams = explode("&", $params);
 
         if (sizeof($urlQueryParams) > 0) {
             foreach ($urlQueryParams as $param) {
@@ -313,10 +317,11 @@ final class Requests {
 
     /**
      * set the request body
+     * @param string $body
      */
-    public function setBody() {
+    public function setBody($body = "" ) {
 
-        $this->body = json_decode(file_get_contents("php://input"), JSON_FORCE_OBJECT);
+        $this->body = !empty($body) ? json_decode($body, JSON_FORCE_OBJECT) : json_decode(file_get_contents("php://input"), JSON_FORCE_OBJECT);
 
         if (is_array($this->body) && sizeof($this->body) > 0) {
             array_walk_recursive($this->body, function(&$value, $key) {
