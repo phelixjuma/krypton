@@ -72,7 +72,7 @@ final class Requests {
     const RESPONSE_INTERNAL_SERVER_ERROR = 500;
 
 
-    private $urlParts = [];
+    public $urlParts = [];
     public $uri;
     public $module = "";
     public $identifier = "";
@@ -121,12 +121,14 @@ final class Requests {
 
         $this->uri = $this->getRequestUri();
 
-        $this->urlParts = Data::resetArray(explode("/",$this->uri));
+        $this->setURIParts();
 
         $this->setRequestHeaders();
+
         $this->setModule();
         $this->setIdentifier();
         $this->setOption();
+
         $this->setQueryParameters();
         $this->setMethod();
         $this->setBody();
@@ -138,7 +140,7 @@ final class Requests {
     /**
      * Set the IP Address
      */
-    private function setIpAddress() {
+    public function setIpAddress() {
         if (isset($_SERVER['HTTP_CLIENT_IP'])) {
             $ip_address = $_SERVER['HTTP_CLIENT_IP'];
         } elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -161,7 +163,7 @@ final class Requests {
     /**
      * Set the user agent
      */
-    private function setUserAgent() {
+    public function setUserAgent() {
         $this->user_agent = Utils::escape($_SERVER['HTTP_USER_AGENT']);
     }
 
@@ -170,7 +172,7 @@ final class Requests {
      * @return bool|mixed|string
      * @throws ConfigurationException
      */
-    private function getRequestUri() {
+    public function getRequestUri() {
 
         $requestUri = Utils::escape(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
@@ -188,30 +190,37 @@ final class Requests {
     }
 
     /**
+     * Set URI parts
+     */
+    public function setURIParts() {
+        $this->urlParts = Data::resetArray(explode("/",$this->uri));
+    }
+
+    /**
      * Set the request module
      */
-    private function setModule() {
+    public function setModule() {
         $this->module = isset($this->urlParts[0]) ? $this->urlParts[0] : "";
     }
 
     /**
      * Set the request identifier
      */
-    private function setIdentifier() {
+    public function setIdentifier() {
         $this->identifier = isset($this->urlParts[1]) ? $this->urlParts[1] : "";
     }
 
     /**
      * Set the request option
      */
-    private function setOption() {
+    public function setOption() {
         $this->option = isset($this->urlParts[2]) ? $this->urlParts[2] : "";
     }
 
     /**
      * Set the query parameters
      */
-    private function setQueryParameters() {
+    public function setQueryParameters() {
         //initialize the query
         $filters = [];
         //we get the url query parameters
@@ -267,7 +276,7 @@ final class Requests {
     /**
      * Set the request method
      */
-    private function setMethod() {
+    public function setMethod() {
 
         $this->method = $this->headers->request_method;
 
