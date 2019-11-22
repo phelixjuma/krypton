@@ -28,36 +28,6 @@ class Email {
     private $PHPMailer;
 
     /**
-     * This is the email address of the email sender
-     * @var string
-     */
-    private $senderEmail;
-
-    /**
-     * This is the name of the sender
-     * @var string
-     */
-    private $senderName;
-
-    /**
-     * This is an array having the email addresses of the email recipients
-     * @var array
-     */
-    private $recipients = [];
-
-    /**
-     * This is the email subject
-     * @var string
-     */
-    private $subject;
-
-    /**
-     * this is the body/content of the email
-     * @var string
-     */
-    private $body;
-
-    /**
      * The success status
      * @var string
      */
@@ -77,40 +47,99 @@ class Email {
         $this->PHPMailer = $PHPMailer;
     }
 
+    public function setConfigurations($host, $port, $username, $password, $auth = true, $secure = true, $timeout=3, $debug=3) {
+
+        $this->PHPMailer->Timeout = $timeout;
+        $this->PHPMailer->SMTPDebug = $debug;
+        $this->PHPMailer->isHTML(true);
+
+        $this->PHPMailer->IsSMTP(); //telling the class to use SMTP
+        $this->PHPMailer->SMTPAuth = $auth; //enable SMTP authentication
+
+        $this->PHPMailer->Host = $host;
+        $this->PHPMailer->Port = $port;
+        $this->PHPMailer->Username = $username;
+        $this->PHPMailer->Password = $password;
+        $this->PHPMailer->SMTPSecure = $secure;
+
+        return $this;
+    }
+
     /**
      * Set the sender of the email
      * @param string $senderEmail the email address of the sender
+     * @return $this
      */
     public function setSenderEmail($senderEmail) {
-        $this->senderEmail = $senderEmail;
+
+        $this->PHPMailer->From = $senderEmail;
+
+        return $this;
     }
 
+    /**
+     * Set the sender name
+     * @param $senderName
+     * @return $this
+     */
     public function setSenderName($senderName) {
-        $this->senderName = $senderName;
+        $this->PHPMailer->FromName = $senderName;
+
+        return $this;
+    }
+
+    /**
+     * Set reply to
+     * @param $email
+     * @param $name
+     * @return $this
+     */
+    public function setReplyTo($email, $name) {
+        $this->PHPMailer->addReplyTo($email, $name);
+
+        return $this;
     }
 
     /**
      * Set the subject of the email
      * @param string $subject the subject of the email
+     * @return $this
      */
     public function setSubject($subject) {
-        $this->subject = $subject;
+
+        $this->PHPMailer->Subject = $subject;
+
+        return $this;
     }
 
     /**
      * Set the body/content of the email
      * @param string $body the content of the email
+     *
+     * @return $this
      */
     public function setBody($body) {
-        $this->body = $body;
+
+        $this->PHPMailer->Body = $body;
+
+        $this->PHPMailer->AltBody = $body;
+
+        return $this;
     }
 
     /**
      * Set the recipients of the email
      * @param array $recipients the recipients of the email
+     *
+     * @return $this
      */
     public function setRecipients($recipients) {
-        $this->recipients = $recipients;
+
+        foreach ($recipients as $recipient) {
+            $this->PHPMailer->addAddress($recipient);
+        }
+
+        return $this;
     }
 
     /**
@@ -118,34 +147,10 @@ class Email {
      */
     public function sendEmail() {
 
-        $mail = $this->PHPMailer;
-
         try {
-            $mail->Timeout = 10;
-            $mail->SMTPDebug = 3;
-            $mail->IsSMTP(); //telling the class to use SMTP
-            $mail->SMTPAuth = true; //enable SMTP authentication
-            $mail->Host = Config::MAIL_HOST;
-            $mail->Port = Config::MAIL_PORT;
-            $mail->Username = Config::MAIL_USERNAME;
-            $mail->Password = Config::MAIL_PASSWORD;
-            $mail->SMTPSecure = Config::MAIL_SMTPSECURE;
-
-            foreach ($this->recipients as $recipient) {
-                $mail->addAddress($recipient);
-            }
-            $mail->From = $this->senderEmail;
-            $mail->FromName = $this->senderName;
-
-            $mail->addReplyTo($this->senderEmail, $this->senderName);
-            $mail->Subject = $this->subject;
-            $mail->Body = $this->body;
-            $mail->AltBody = $this->body;
-
-            $mail->isHTML(true);
 
             try {
-                $this->success = $mail->send();
+                $this->success = $this->PHPMailer->send();
             } catch (\Exception $e) {
                 $this->responseMessage = $e->getMessage();
             }
