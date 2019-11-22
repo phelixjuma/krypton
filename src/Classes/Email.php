@@ -1,19 +1,12 @@
 <?php
 /**
- * This is script handles cache. Implements memcached
- * @author Phelix Juma <jumaphelix@kuzalab.co.ke>
+ * This is script handles emails.
+ * @author Phelix Juma <jumaphelix@kuzalab.com>
  * @copyright (c) 2018, Kuza Lab
  * @package Kuzalab
  */
 
 namespace Kuza\Krypton\Classes;
-
-use Kuza\Krypton\Config\Config;
-
-/** Do not allow direct access of this file */
-if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME']) {
-    exit;
-}
 
 /**
  * This class handles all methods and instances for managing the email sending
