@@ -106,6 +106,7 @@ final class Requests {
         "success"       => false,
         "message"       => "",
         "data"          => null,
+        "errors"        => [],
         "total_records" => 0,
         "code"          =>  200,
         "benchmark"     => []
@@ -390,6 +391,7 @@ final class Requests {
                 "success"   => isset($this->apiData['success']) ? $this->apiData['success'] : false,
                 "message"   => isset($this->apiData['message']) ? $this->apiData['message'] : "",
                 "data"      => isset($this->apiData['data']) ? $this->apiData['data'] : null,
+                "errors"    => isset($this->apiData['errors']) ? $this->apiData['errors'] : [],
                 "benchmark" => isset($this->apiData['benchmark']) ? $this->apiData['benchmark'] : [],
                 "meta"      =>  [
                     "no_of_records" => 0,
