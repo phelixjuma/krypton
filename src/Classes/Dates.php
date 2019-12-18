@@ -33,8 +33,8 @@ final class Dates {
 
     /**
      * Convert date to a timestamp
-     * @param type $datetime
-     * @return type
+     * @param  $datetime
+     * @return string
      */
     public static function dateToTimestamp($datetime) {
         $date = new DateTime(self::formatDate($datetime, "Y-m-d"));
@@ -306,5 +306,31 @@ final class Dates {
      */
     public static function getCurrentMonth() {
         return Date("m", time());
+    }
+
+    /** Function that detects whether a given date falls in
+     * a leap year or not.
+     *
+     * @param null $date Optional
+     * @return bool TRUE if it's a leap year. FALSE if it is not a leap year.
+     */
+    public function isLeapYear($date = null){
+        //Use the current timestamp by default.
+        $ts = time();
+        //A specific year or date was given.
+        if(!is_null($date)){
+            //A year was provided by itself... probably.
+            if(strlen($date) == 4){
+                //Create a full date string.
+                $date = $date . '-01-01';
+            }
+            $ts = strtotime("$date");
+        }
+        //If date "L" returns a 1 string, it was a leap year.
+        if(date('L', $ts) == 1){
+            return true;
+        }
+        //Otherwise, return false.
+        return false;
     }
 }
