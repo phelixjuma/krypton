@@ -12,11 +12,11 @@ namespace Kuza\Krypton\Classes;
 class MpesaDaraja
 {
 
-    public $timeOutUrl = "/safdaraja/timeout";
-    public $resultUrl = "/safdaraja/result";
-    public $callbackUrl = "/safdaraja/callback";
-    public $confirmationUrl = "/safdarara/confirmation";
-    public $validationUrl = "/safdaraja/validation";
+    public $timeOutUrl = "safdaraja/timeout";
+    public $resultUrl = "safdaraja/result";
+    public $callbackUrl = "safdaraja/callback";
+    public $confirmationUrl = "safdarara/confirmation";
+    public $validationUrl = "safdaraja/validation";
 
     private $c2b_consumer_key;
     private $c2b_consumer_secret;
@@ -215,8 +215,8 @@ class MpesaDaraja
             'PartyA' => $shortCode,
             'IdentifierType' => '4',
             'Remarks' => $Remarks,
-            'QueueTimeOutURL' => $this->timeOutUrl,
-            'ResultURL' => $this->resultUrl
+            'QueueTimeOutURL' => $this->baseURL . $this->timeOutUrl,
+            'ResultURL' => $this->baseURL . $this->resultUrl
         );
 
         return $this->sendRequest($url, $requestBody);
@@ -279,7 +279,7 @@ class MpesaDaraja
             'PartyA' => $PartyA,
             'IdentifierType' => '1',
             'ResultURL' => $this->resultUrl,
-            'QueueTimeOutURL' => $this->timeOutUrl,
+            'QueueTimeOutURL' => $this->baseURL . $this->timeOutUrl,
             'Remarks' => $Remarks,
             'Occasion' => $Occasion
         );
