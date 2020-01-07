@@ -657,6 +657,32 @@ abstract class DBHandler {
     }
 
     /**
+     * Execute a custom select query
+     * @param $sql
+     * @return array
+     */
+    public function selectCustomQuery($sql) {
+
+        $response = [];
+
+        try {
+            $stmt = $this->adapter()->prepare($sql);
+
+            $stmt->execute();
+
+            // set the resulting array to associative
+            $stmt->setFetchMode(\PDO::FETCH_ASSOC);
+
+            $response =  $stmt->fetchAll();
+
+        } catch (\PDOException $e) {
+            $this->is_error = true;
+            $this->message = $e->getMessage();
+        }
+        return $response;
+    }
+
+    /**
      * Join database tables
      * @param $table
      * @param null $on
