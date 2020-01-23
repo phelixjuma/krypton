@@ -142,22 +142,30 @@ final class Requests {
      * Set the IP Address
      */
     public function setIpAddress() {
-        if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip_address = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else if(isset($_SERVER['HTTP_X_FORWARDED'])) {
-            $ip_address = $_SERVER['HTTP_X_FORWARDED'];
-        } else if(isset($_SERVER['HTTP_FORWARDED_FOR'])) {
-            $ip_address = $_SERVER['HTTP_FORWARDED_FOR'];
-        } else if(isset($_SERVER['HTTP_FORWARDED'])) {
-            $ip_address = $_SERVER['HTTP_FORWARDED'];
-        } else if(isset($_SERVER['REMOTE_ADDR'])) {
-            $ip_address = $_SERVER['REMOTE_ADDR'];
-        } else {
-            $ip_address = 'UNKNOWN';
-        }
 
+        $ip_address = "";
+
+        foreach (array(
+                     'HTTP_CLIENT_IP',
+                     'HTTP_X_FORWARDED_FOR',
+                     'HTTP_X_FORWARDED',
+                     'HTTP_X_CLUSTER_CLIENT_IP',
+                     'HTTP_FORWARDED_FOR',
+                     'HTTP_FORWARDED',
+                     'REMOTE_ADDR') as $key) {
+            if (array_key_exists($key, $_SERVER)) {
+                foreach (explode(',', $_SERVER[$key]) as $ip) {
+                    $ip = trim($ip);
+                    if ((bool) filter_var($ip, FILTER_VALIDATE_IP,
+                        FILTER_FLAG_IPV4 |
+                        FILTER_FLAG_NO_PRIV_RANGE |
+                        FILTER_FLAG_NO_RES_RANGE)) {
+                        $ip_address =  $ip;
+                        break;
+                    }
+                }
+            }
+        }
         $this->ip_address = Utils::escape($ip_address);
     }
 
