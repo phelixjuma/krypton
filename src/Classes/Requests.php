@@ -82,6 +82,7 @@ final class Requests {
     public $offset = 0; //default offset is 0
     public $limit = 50; //default limit is 50
     public $search = "";
+    public $download = false;
     public $sort = "desc";
     public $backtrace = 0;
     public $body = [];
@@ -260,6 +261,7 @@ final class Requests {
         $this->sort = isset($filters['sort']) ? $filters['sort'] : "desc";
         $this->isBenchmark = isset($filters['benchmark']) && $filters['benchmark'] == 1 ? true : false;
         $this->backtrace = isset($filters['backtrace']) ? $filters['backtrace'] : 0;
+        $this->download = isset($filters['download']) && $filters['download'] == 1 ? true : false;
 
         //unset the offset and limit from the filters
         unset($filters['offset']);
@@ -268,6 +270,7 @@ final class Requests {
         unset($filters['sort']);
         unset($filters['benchmark']);
         unset($filters['backtrace']);
+        unset($filters['download']);
 
         // formatting of filters ensures that when comma-seperated, we format them to an array
         $formattedFilters = [];
