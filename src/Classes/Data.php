@@ -646,4 +646,60 @@ final class Data {
     public static function mapObjectToArray($object) {
         return  json_decode(json_encode($object), true);
     }
+
+    /**
+     * Convert array to csv
+     * @param array $data
+     * @return false|null|string
+     */
+    private static function array2csv(array &$data) {
+
+        if (count($data) == 0) {
+            return null;
+        }
+        ob_start();
+
+        $df = fopen("php://output", 'w');
+
+        fputcsv($df, array_keys(reset($data)));
+
+        foreach ($data as $row) {
+            fputcsv($df, $row);
+        }
+        fclose($df);
+        return ob_get_clean();
+    }
+
+    /**
+     * Send headers for file download
+     * @param $filename
+     */
+    private static function download_send_headers($filename) {
+
+        $now = gmdate("D, d M Y H:i:s");
+
+        header("Expires: Tue, 03 Jul 2001 06:00:00 GMT");
+        header("Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate");
+        header("Last-Modified: {$now} GMT");
+
+        // force download
+        header("Content-Type: application/force-download");
+        header("Content-Type: application/octet-stream");
+        header("Content-Type: application/download");
+
+        // disposition / encoding on response body
+        header("Content-Disposition: attachment;filename={$filename}");
+        header("Content-Transfer-Encoding: binary");
+    }
+
+    /**
+     * Download a csv file
+     * @param $data
+     * @param $filename
+     */
+    public static function download_csv_file($data, $filename) {
+        self::download_send_headers($filename);
+        echo self::array2csv($data);
+        die();
+    }
 }
