@@ -387,13 +387,11 @@ final class Requests {
      */
     public function sendResponse() {
 
-        header("Content-Type: application/json;charset=utf-8");//only send json data
+
 
         if (!isset($this->apiData['code'])) {
             $this->apiData['code'] = 200;
         }
-
-        http_response_code($this->apiData['code']);
 
         if($this->apiData['code'] != 204) {
 
@@ -418,7 +416,18 @@ final class Requests {
                 }
             }
 
-            echo json_encode($this->apiData);
+            // download response
+            if ($this->download === true) {
+                Data::download_csv_file($this->apiData['data'], $this->module . '.csv');
+            }
+            // send response as json
+            else {
+
+                header("Content-Type: application/json;charset=utf-8");//only send json data
+                http_response_code($this->apiData['code']);
+
+                echo json_encode($this->apiData);
+            }
         }
         // we terminate the code
         //exit;
