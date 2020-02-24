@@ -101,8 +101,11 @@ class Model extends DBHandler {
         }
 
         // handle start date and end date
+        $startDate = "";
+        $endDate = "";
         if (isset($criteria['start_date']) && isset($criteria['end_date'])) {
-            $criteria[] = new Between("created_at", [$criteria['start_date'], $criteria['end_date']], "created_at");
+            $startDate = $criteria['start_date'];
+            $endDate = $criteria['end_date'];
         }
 
         // eliminate non-existent fields
@@ -112,6 +115,10 @@ class Model extends DBHandler {
             if(!Data::arrayValueExists($key,$this->getColumns())) {
                 unset($criteria[$key]);
             }
+        }
+
+        if(!empty($startDate) && !empty($endDate)) {
+            $criteria[] = new Between("created_at", [$criteria['start_date'], $criteria['end_date']], "created_at");
         }
     }
 

@@ -601,6 +601,7 @@ abstract class DBHandler {
      * @return array|null
      */
     public function select($criteria=null,$columns=null,$group_by=null,$order_by=null,$limit=null, $isSearch = false) {
+
         $columns = (is_array($columns) && count($columns)>0)?  implode(',', $columns) : '*';
 
         $group_by = (is_array($group_by) && count($group_by)>0)?  implode(',', $group_by) : $group_by;
