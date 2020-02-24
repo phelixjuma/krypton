@@ -118,7 +118,7 @@ class Model extends DBHandler {
         }
 
         if(!empty($startDate) && !empty($endDate)) {
-            $criteria[] = new Between("created_at", [$criteria['start_date'], $criteria['end_date']], "created_at");
+            $criteria[] = new Between("DATE({$this->table_name}.created_at)", [$startDate, $endDate], "created_at");
         }
     }
 
