@@ -4,6 +4,7 @@ namespace Kuza\Krypton\Database;
 
 use Kuza\Krypton\Classes\Data;
 use Kuza\Krypton\Classes\Dates;
+use Kuza\Krypton\Database\Predicates\Between;
 
 class Model extends DBHandler {
 
@@ -98,6 +99,12 @@ class Model extends DBHandler {
         if(Data::arrayValueExists("is_archived",$this->getColumns()) && !isset($criteria['is_archived'])) {
             $criteria['is_archived'] = 0;
         }
+
+        // handle start date and end date
+        if (isset($criteria['start_date']) && isset($criteria['end_date'])) {
+            $criteria[] = new Between("created_at", [$criteria['start_date'], $criteria['end_date']], "created_at");
+        }
+
         // eliminate non-existent fields
         foreach ($criteria as $key => $value) {
             // we remove the table name from the key.
