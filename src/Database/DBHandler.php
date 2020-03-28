@@ -8,6 +8,7 @@ use Kuza\Krypton\Config\Config;
 use Kuza\Krypton\Database\Predicates\Between;
 use Kuza\Krypton\Database\Predicates\DateDiffGreaterThanOrEqualTo;
 use Kuza\Krypton\Database\Predicates\In;
+use Kuza\Krypton\Database\Predicates\JsonContains;
 use Kuza\Krypton\Database\Predicates\NestedAnd;
 use Kuza\Krypton\Database\Predicates\NestedOr;
 use Kuza\Krypton\Database\Predicates\PredicateFunction;
@@ -322,7 +323,8 @@ abstract class DBHandler {
                         $expression[] = is_object($v)? $expBuilder($v,$column) : $expBuilder($v,$k);
                     }
                     $expression = '('.implode( ($value instanceof NestedOr? ' OR ': ' AND ') , $expression).')';
-                } elseif($value instanceof PredicateFunction || $value instanceof Between || $value instanceof  In || $value instanceof DateDiffGreaterThanOrEqualTo) {
+                } elseif($value instanceof PredicateFunction || $value instanceof Between || $value instanceof  In ||
+                    $value instanceof DateDiffGreaterThanOrEqualTo || $value instanceof JsonContains) {
                     $expression = $value->getExpression();
                 } else {
                     /*if the argument supplied is an object we obtain values, expression from the object accessor methods */

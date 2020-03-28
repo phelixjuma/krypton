@@ -9,7 +9,7 @@ class JsonContains extends Predicate {
             $expressions = [];
 
             foreach ($this->right as $exp) {
-                $expressions[] = "JSON_CONTAINS('$this->left', '".$exp['value']."' , '". $exp['field']."') = 1";
+                $expressions[] = "JSON_CONTAINS(`$this->left`, '".$exp['value']."' , '". $exp['field']."') = 1";
             }
 
             $this->expression = implode(" AND ", $expressions);
