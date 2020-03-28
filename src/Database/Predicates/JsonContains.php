@@ -5,7 +5,15 @@ namespace Kuza\Krypton\Database\Predicates;
 class JsonContains extends Predicate {
         
         public function getExpression($param_prefix=null) {
-           $this->expression = "JSON_CONTAINS('$this->left', '".$this->right[0]."' , '". $this->right[1]."') = 1";
-           return $this->expression;
+
+            $expressions = [];
+
+            foreach ($this->right as $exp) {
+                $expressions[] = "JSON_CONTAINS('$this->left', '".$exp['value']."' , '". $exp['field']."') = 1";
+            }
+
+            $this->expression = implode(" AND ", $expressions);
+
+            return $this->expression;
         }
 }
