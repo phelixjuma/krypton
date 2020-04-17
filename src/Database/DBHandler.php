@@ -444,7 +444,7 @@ abstract class DBHandler {
         $cpv=self::createColumnsParamsValues($criteria);
 
         $sql="DELETE FROM `$this->table_name` WHERE ".
-            implode("AND",$cpv['columns_equals_params']);
+            implode(" AND ",$cpv['columns_equals_params']);
 
         $statement=$this->createStatement($sql,$cpv['params'],$cpv['values']);
 
