@@ -86,6 +86,7 @@ final class Requests {
     public $sort = "desc";
     public $backtrace = 0;
     public $body = [];
+    public $files = [];
     public $method = "";
     public $isGet = false;
     public $isPost = false;
@@ -123,20 +124,17 @@ final class Requests {
 
         $this->uri = $this->getRequestUri();
 
-        $this->setURIParts();
-
-        $this->setRequestHeaders();
-
-        $this->setModule();
-        $this->setIdentifier();
-        $this->setOption();
-
-        $this->setQueryParameters();
-        $this->setMethod();
-        $this->setBody();
-
-        $this->setUserAgent();
-        $this->setIpAddress();
+        $this->setURIParts()
+            ->setRequestHeaders()
+            ->setModule()
+            ->setIdentifier()
+            ->setOption()
+            ->setQueryParameters()
+            ->setMethod()
+            ->setBody()
+            ->setFiles()
+            ->setUserAgent()
+            ->setIpAddress();
     }
 
     /**
@@ -168,6 +166,8 @@ final class Requests {
             }
         }
         $this->ip_address = Utils::escape($ip_address);
+
+        return $this;
     }
 
     /**
@@ -175,6 +175,16 @@ final class Requests {
      */
     public function setUserAgent() {
         $this->user_agent = Utils::escape($_SERVER['HTTP_USER_AGENT']);
+
+        return $this;
+    }
+
+    /**
+     * Get original url
+     * @return string
+     */
+    public function getOriginalUrl() {
+        return $this->getHeader('unencoded-url') . $this->getHeader('request-uri');
     }
 
     /**
@@ -204,6 +214,8 @@ final class Requests {
      */
     public function setURIParts() {
         $this->urlParts = Data::resetArray(explode("/",$this->uri));
+
+        return $this;
     }
 
     /**
@@ -211,6 +223,8 @@ final class Requests {
      */
     public function setModule() {
         $this->module = isset($this->urlParts[0]) ? $this->urlParts[0] : "";
+
+        return $this;
     }
 
     /**
@@ -218,6 +232,8 @@ final class Requests {
      */
     public function setIdentifier() {
         $this->identifier = isset($this->urlParts[1]) ? $this->urlParts[1] : "";
+
+        return $this;
     }
 
     /**
@@ -225,13 +241,17 @@ final class Requests {
      */
     public function setOption() {
         $this->option = isset($this->urlParts[2]) ? $this->urlParts[2] : "";
+
+        return $this;
     }
 
     /**
      * Set the query parameters
      * @param string $queryParams
+     * @return $this
      */
     public function setQueryParameters($queryParams = "") {
+
         //initialize the query
         $filters = [];
         //we get the url query parameters
@@ -287,6 +307,8 @@ final class Requests {
             }
         }
         $this->filters = (object) $formattedFilters;
+
+        return $this;
     }
 
     /**
@@ -325,21 +347,47 @@ final class Requests {
                 $this->isConnect = true;
                 break;
         }
+
+        return $this;
+    }
+
+    /**
+     * Check if this is a json request
+     * @return bool
+     */
+    private function isJsonRequest() {
+        return isset($this->headers->content_type) && $this->headers->content_type == "application/json";
     }
 
     /**
      * set the request body
      * @param string $body
+     * @return $this
      */
     public function setBody($body = "" ) {
 
-        $this->body = !empty($body) ? json_decode($body, JSON_FORCE_OBJECT) : json_decode(file_get_contents("php://input"), JSON_FORCE_OBJECT);
+        if ($this->isJsonRequest()) {
+            $this->body = !empty($body) ? json_decode($body, JSON_FORCE_OBJECT) : json_decode(file_get_contents("php://input"), JSON_FORCE_OBJECT);
+        } else {
+            $this->body = $_POST;
+        }
 
         if (is_array($this->body) && sizeof($this->body) > 0) {
             array_walk_recursive($this->body, function(&$value, $key) {
                 $value = Utils::escape($value);
             });
         }
+
+        return $this;
+    }
+
+    /**
+     * Set files
+     */
+    public function setFiles() {
+        $this->files = $_FILES;
+
+        return $this;
     }
 
     /**
@@ -358,6 +406,8 @@ final class Requests {
             $headers[Utils::escape(strtolower(str_ireplace("HTTP_","", $key)))] = Utils::escape($value);
         }
         $this->headers = (object) $headers;
+
+        return $this;
     }
 
     /**
@@ -380,6 +430,8 @@ final class Requests {
 
         // set credentials to true
         //header('Access-Control-Allow-Credentials', true);
+
+        return $this;
     }
 
     /**
@@ -473,5 +525,15 @@ final class Requests {
         } catch (\Exception $e) {
             throw new HttpException($e->getMessage(), $e->getCode());
         }
+    }
+
+    /**
+     * Get a specific header
+     * @param $header
+     * @return string
+     */
+    public function getHeader($header) {
+        $header = str_replace("-", "_", strtolower($header));
+        return isset($this->headers->$header) ? $this->headers->$header: "";
     }
 }
