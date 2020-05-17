@@ -96,9 +96,12 @@ class Response
     /**
      * Sets status code
      * @param int $code
+     * @return $this
      */
     public function status_code($code=200) {
         $this->status_code = $code;
+
+        return $this;
     }
 
     /**
@@ -128,6 +131,8 @@ class Response
     public function download($data) {
         // download response
         Data::download_csv_file($data, $this->request->module . '.csv');
+
+        exit(0);
     }
 
     /**
