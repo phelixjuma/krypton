@@ -17,7 +17,6 @@ use Pecee\SimpleRouter\SimpleRouter;
 
 use Kuza\Krypton\Classes\Benchmark;
 use Kuza\Krypton\Classes\Requests;
-use Kuza\Krypton\Config\Config;
 
 
 /**
@@ -75,6 +74,12 @@ final class App {
 
     private $error_handler = [];
 
+    private $controllers_directory = "Controllers";
+    private $views_directory = "Views";
+    private $layouts_directory = "Layouts";
+    private $logs_directory = "Logs";
+    private $routes_file = "routes";
+
     /**
      * Initialize the system
      * @throws \Kuza\Krypton\Exceptions\ConfigurationException
@@ -97,11 +102,11 @@ final class App {
 
         // error reporting - all errors for development. Works when display_errors = On in php.ini file
         error_reporting(E_ALL | E_STRICT);
-        ini_set("display_errors",1);
+        ini_set("display_errors",0);
         ini_set("html_errors", 1);
-        ini_set("display_startup_errors", 1);
+        ini_set("display_startup_errors", 0);
         ini_set("log_errors", 1);
-        ini_set("error_log", Config::LOGS_DIR . "php-mt-error.log");
+        ini_set("error_log", $this->logs_directory . "/" .date("Y-m-d", time()). "errors.log");
         ini_set("ignore_repeated_errors", 1);
         ini_set('memory_limit', '1024M');
         ini_set('upload_max_filesize', '1024M');
@@ -111,7 +116,7 @@ final class App {
 
         // load the environment file
         try {
-            $dotenv = new Dotenv(__DIR__);
+            $dotenv = Dotenv::createImmutable(getcwd());
             $dotenv->load();
         } catch (\Exception $e) {
 //            print_r($e->getMessage());
@@ -158,6 +163,65 @@ final class App {
     }
 
     /**
+     * Set views directory
+     * @param $dir
+     * @return $this
+     */
+    public function setViewsDirectory($dir) {
+
+        $this->views_directory = $dir;
+
+        return $this;
+    }
+
+    /**
+     * Set layouts directory
+     * @param $dir
+     * @return $this
+     */
+    public function setLayoutsDirectory($dir) {
+
+        $this->layouts_directory = $dir;
+
+        return $this;
+    }
+
+    /**
+     * Set controllers directory
+     * @param $dir
+     * @return $this
+     */
+    public function setControllersDirectory($dir) {
+
+        $this->controllers_directory = $dir;
+
+        return $this;
+    }
+
+    /**
+     * Set logs directory
+     * @param $dir
+     * @return $this
+     */
+    public function setLogsDirectory($dir) {
+
+        $this->logs_directory = $dir;
+
+        return $this;
+    }
+
+    /**
+     * Set routes file
+     * @param $file
+     * @return $this
+     */
+    public function setRoutesFile($file) {
+        $this->routes_file = $file;
+
+        return $this;
+    }
+
+    /**
      * Handle exception
      * @param $ex
      */
@@ -198,7 +262,7 @@ final class App {
          * Can be overwritten by using the namespace config option on your routes.
          */
 
-        SimpleRouter::setDefaultNamespace('\Kuza\Krypton\Framework\Controllers');
+        SimpleRouter::setDefaultNamespace("\Kuza\Krypton\Framework\{$this->controllers_directory}");
 
         // Add our container to simple-router and enable dependency injection
         SimpleRouter::enableDependencyInjection($this->DIContainer);
@@ -249,7 +313,7 @@ final class App {
      * @return string
      */
     private function getRouteDefinitions() {
-        return "routes.php";
+        return $this->routes_file . ".php";
     }
 
     /**
@@ -257,7 +321,7 @@ final class App {
      * @return string
      */
     public function getLayout() {
-        return "Layouts/layout.php";
+        return $this->layouts_directory . "/layout.php";
     }
 
     /**
@@ -266,7 +330,7 @@ final class App {
      * @return string
      */
     private function getViewTemplate($page) {
-        return Config::VIEWS_DIR . $page . '.html';
+        return $this->views_directory ."/". $page . '.html';
     }
 
     /**
