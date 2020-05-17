@@ -355,8 +355,17 @@ final class Requests {
      * Check if this is a json request
      * @return bool
      */
-    private function isJsonRequest() {
-        return isset($this->headers->content_type) && $this->headers->content_type == "application/json";
+    public function isJsonRequest(): bool {
+        return (strtolower($this->getHeader('content-type')) === 'application/json');
+    }
+
+    /**
+     * Returns true if the request is made through Ajax
+     *
+     * @return bool
+     */
+    public function isAjax(): bool {
+        return (strtolower($this->getHeader('http-x-requested-with')) === 'xmlhttprequest');
     }
 
     /**
