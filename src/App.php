@@ -262,7 +262,7 @@ final class App {
          * Can be overwritten by using the namespace config option on your routes.
          */
 
-        SimpleRouter::setDefaultNamespace("\Kuza\Krypton\Framework\{$this->controllers_directory}");
+        SimpleRouter::setDefaultNamespace("\Kuza\Krypton\Framework\\".$this->controllers_directory);
 
         // Add our container to simple-router and enable dependency injection
         SimpleRouter::enableDependencyInjection($this->DIContainer);
