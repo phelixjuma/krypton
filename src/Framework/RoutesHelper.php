@@ -68,10 +68,10 @@ class RoutesHelper
     public static function input($index = null, $defaultValue = null, ...$methods)
     {
         if ($index !== null) {
-            return request()->getInputHandler()->value($index, $defaultValue, ...$methods);
+            return RoutesHelper::request()->getInputHandler()->value($index, $defaultValue, ...$methods);
         }
 
-        return request()->getInputHandler();
+        return RoutesHelper::request()->getInputHandler();
     }
 
     /**
@@ -81,10 +81,10 @@ class RoutesHelper
     public static function redirect(string $url, ?int $code = null): void
     {
         if ($code !== null) {
-            response()->httpCode($code);
+            RoutesHelper::response()->httpCode($code);
         }
 
-        response()->redirect($url);
+        RoutesHelper::response()->redirect($url);
     }
 
     /**
