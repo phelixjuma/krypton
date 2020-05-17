@@ -38,6 +38,9 @@ class Controller {
     public $validation_errors = false;
     public $errors = [];
 
+
+    public $currentUser;
+
     /**
      * Controller constructor.
      * @throws \Kuza\Krypton\Exceptions\ConfigurationException
@@ -51,6 +54,9 @@ class Controller {
         $this->jsonResponse = new JsonResponse;
         $this->requests = new Requests();
         $this->response = new Response($this->requests);
+
+        // set current user
+        $this->currentUser = RoutesHelper::request()->user;
     }
 
     /**

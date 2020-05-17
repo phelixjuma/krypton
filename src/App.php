@@ -106,7 +106,7 @@ final class App {
         ini_set("html_errors", 1);
         ini_set("display_startup_errors", 0);
         ini_set("log_errors", 1);
-        ini_set("error_log", $this->logs_directory . "/" .date("Y-m-d", time()). "errors.log");
+        ini_set("error_log", $this->logs_directory . "/" .date("Y-m-d", time()). "-errors.log");
         ini_set("ignore_repeated_errors", 1);
         ini_set('memory_limit', '1024M');
         ini_set('upload_max_filesize', '1024M');
