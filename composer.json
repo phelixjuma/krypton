@@ -25,7 +25,7 @@
         "ext-curl": "*",
         "ext-pdo": "*",
         "firebase/php-jwt": "^5.0",
-        "phpmailer/phpmailer": "^5.0",
+        "phpmailer/phpmailer": "^6.1",
         "aws/aws-sdk-php": "^3.81",
         "guzzlehttp/guzzle": "^6.3",
         "africastalking/africastalking": "^2.1",
