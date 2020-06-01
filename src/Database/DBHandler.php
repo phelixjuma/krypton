@@ -644,17 +644,24 @@ abstract class DBHandler {
         }
 
         $sql="SELECT $columns FROM $this->table_name $this->join WHERE $criteria $group_by $order_by $queryLimit ";
+        $count_sql="SELECT $columns FROM $this->table_name $this->join WHERE $criteria $group_by";
 
        // print $sql."\n";
 
         $result = [];
         try {
+
+            // get the records
             $statement=$this->createStatement($sql,$params,$values);
             $statement->execute();
             $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             $this->recordsSelected = $statement->rowCount();
 
-            $this->total_records = $this->count($criteria);
+            // count the records
+            $count_statement=$this->createStatement($count_sql,$params,$values);
+            $count_statement->execute();
+            //$result = $count_statement->fetchAll(\PDO::FETCH_ASSOC);
+            $this->total_records = $count_statement->rowCount();
 
         } catch(\Exception $e) {
             $this->is_error = true;
