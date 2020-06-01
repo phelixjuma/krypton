@@ -23,7 +23,7 @@ abstract class DBHandler {
 
     private $recordsAffected;
     private $lastAffectedId;
-    private $recordsSelected;
+    public $recordsSelected;
     private $join;
 
     protected $prkey;
@@ -33,6 +33,8 @@ abstract class DBHandler {
     private $success;
     private $columns;
     private $table_meta;
+
+    public $total_records = 0;
 
     /**
      * @var \PDO $pdo
@@ -651,6 +653,9 @@ abstract class DBHandler {
             $statement->execute();
             $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             $this->recordsSelected = $statement->rowCount();
+
+            $this->total_records = $this->count($criteria);
+
         } catch(\Exception $e) {
             $this->is_error = true;
             $this->message = $e->getMessage();
