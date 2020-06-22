@@ -356,7 +356,7 @@ final class Requests {
      * @return bool
      */
     public function isJsonRequest(): bool {
-        return (strtolower($this->getHeader('content-type')) === 'application/json');
+        return strpos(strtolower($this->getHeader('content-type')), 'application/json') !== false;
     }
 
     /**
@@ -365,7 +365,7 @@ final class Requests {
      * @return bool
      */
     public function isAjax(): bool {
-        return (strtolower($this->getHeader('http-x-requested-with')) === 'xmlhttprequest');
+        return strpos(strtolower($this->getHeader('http-x-requested-with')), 'xmlhttprequest') !== false;
     }
 
     /**
