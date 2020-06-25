@@ -13,6 +13,7 @@ namespace Kuza\Krypton;
 use DI\Container;
 use Dotenv\Dotenv;
 use Kuza\Krypton\Classes\Response;
+use Kuza\Krypton\Config\Config;
 use Pecee\SimpleRouter\SimpleRouter;
 
 use Kuza\Krypton\Classes\Benchmark;
@@ -100,9 +101,23 @@ final class App {
         $this->benchmark = new Benchmark();
         $this->benchmark->start();
 
+        // load the environment file
+        try {
+            $dotenv = Dotenv::createImmutable(getcwd());
+            $dotenv->load();
+        } catch (\Exception $e) {
+//            print_r($e->getMessage());
+        }
+
+        try {
+            $displayErrors = Config::getSpecificConfig("DISPLAY_ERRORS");
+        } catch (\Exception $e) {
+            $displayErrors = 0;
+        }
+
         // error reporting - all errors for development. Works when display_errors = On in php.ini file
         error_reporting(E_ALL | E_STRICT);
-        ini_set("display_errors",0);
+        ini_set("display_errors", $displayErrors);
         ini_set("html_errors", 1);
         ini_set("display_startup_errors", 0);
         ini_set("log_errors", 1);
@@ -113,14 +128,6 @@ final class App {
         ini_set('post_max_size', '1024M');
 
         mb_internal_encoding('UTF-8');
-
-        // load the environment file
-        try {
-            $dotenv = Dotenv::createImmutable(getcwd());
-            $dotenv->load();
-        } catch (\Exception $e) {
-//            print_r($e->getMessage());
-        }
 
         //set the php-di container
         $builder = new \DI\ContainerBuilder();
