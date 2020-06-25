@@ -337,7 +337,7 @@ final class App {
      * @return string
      */
     private function getViewTemplate($page) {
-        return $this->views_directory ."/". $page . '.html';
+        return $this->views_directory ."/". $page . '.phtml';
     }
 
     /**
