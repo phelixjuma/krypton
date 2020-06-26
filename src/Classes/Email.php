@@ -8,6 +8,9 @@
 
 namespace Kuza\Krypton\Classes;
 
+use Kuza\Krypton\Config\Config;
+use PHPMailer\PHPMailer\PHPMailer;
+
 /**
  * This class handles all methods and instances for managing the email sending
  * @package mealtimefranchise
@@ -16,7 +19,7 @@ class Email {
 
     /**
      * The PHPMailer object
-     * @var \PHPMailer
+     * @var PHPMailer
      */
     private $PHPMailer;
 
@@ -34,13 +37,38 @@ class Email {
 
     /**
      * Email constructor.
-     * @param \PHPMailer $PHPMailer
+     * @param PHPMailer $PHPMailer
+     * @throws \Kuza\Krypton\Exceptions\ConfigurationException
      */
-    public function __construct(\PHPMailer $PHPMailer) {
+    public function __construct(PHPMailer $PHPMailer) {
+
         $this->PHPMailer = $PHPMailer;
+
+        $host = Config::getSpecificConfig("MAIL_HOST");
+        $port = Config::getSpecificConfig("MAIL_PORT");
+        $username = Config::getSpecificConfig("MAIL_USERNAME");
+        $password = Config::getSpecificConfig("MAIL_PASSWORD");
+        $auth = Config::getSpecificConfig("MAIL_SMTPAUTH");
+        $secure = Config::getSpecificConfig("MAIL_SMTPSECURE");
+        $timeout = Config::getSpecificConfig("MAIL_TIMEOUT");
+        $debug = Config::getSpecificConfig("MAIL_DEBUG");
+
+        $this->setConfigurations($host, $port, $username, $password, $auth, $secure, $timeout, $debug);
+
     }
 
-    public function setConfigurations($host, $port, $username, $password, $auth = true, $secure = true, $timeout=3, $debug=3) {
+    /**
+     * Set configuration details
+     * @param $host
+     * @param $port
+     * @param $username
+     * @param $password
+     * @param bool $auth
+     * @param bool $secure
+     * @param int $timeout
+     * @param int $debug
+     */
+    private function setConfigurations($host, $port, $username, $password, $auth = true, $secure = true, $timeout=3, $debug=3) {
 
         $this->PHPMailer->Timeout = $timeout;
         $this->PHPMailer->SMTPDebug = $debug;
@@ -54,8 +82,6 @@ class Email {
         $this->PHPMailer->Username = $username;
         $this->PHPMailer->Password = $password;
         $this->PHPMailer->SMTPSecure = $secure;
-
-        return $this;
     }
 
     /**
@@ -86,6 +112,7 @@ class Email {
      * @param $email
      * @param $name
      * @return $this
+     * @throws \PHPMailer\PHPMailer\Exception
      */
     public function setReplyTo($email, $name) {
         $this->PHPMailer->addReplyTo($email, $name);
@@ -122,9 +149,9 @@ class Email {
 
     /**
      * Set the recipients of the email
-     * @param array $recipients the recipients of the email
-     *
+     * @param $recipients
      * @return $this
+     * @throws \PHPMailer\PHPMailer\Exception
      */
     public function setRecipients($recipients) {
 
