@@ -37,6 +37,7 @@ class MpesaDaraja
     private $live_base_url = "https://api.safaricom.co.ke/";
     private $sandbox_base_url = "https://sandbox.safaricom.co.ke/";
     private $baseURL = "";
+    private $clientBaseURL = ""; // this is the base URL of the system making the request
 
     /**
      * MpesaDaraja constructor.
@@ -45,6 +46,14 @@ class MpesaDaraja
      */
     public function __construct() {
         $this->baseURL = $this->sandbox_base_url;
+        $this->setClientBaseUrl();
+    }
+
+    /**
+     * Set the base URL of the client
+     */
+    private function setClientBaseUrl() {
+        $this->clientBaseURL = "https://".$_SERVER['HTTP_HOST'];
     }
 
     /**
@@ -153,8 +162,8 @@ class MpesaDaraja
             'Amount' => $Amount,
             'ReceiverParty' => $ReceiverParty,
             'ReceiverIdentifierType' => '4',
-            'ResultURL' => $this->baseURL . $resulturl,
-            'QueueTimeOutURL' => $this->baseURL. $timeouturl,
+            'ResultURL' => $this->clientBaseURL . $resulturl,
+            'QueueTimeOutURL' => $this->clientBaseURL. $timeouturl,
             'Remarks' => $Remarks,
             'Occasion' => $Occasion
         );
@@ -186,8 +195,8 @@ class MpesaDaraja
             "PartyA" => $this->b2c_paybill,
             "PartyB" => $phoneNumber,
             "Remarks" => $Remarks,
-            'QueueTimeOutURL' => $this->baseURL . $timeouturl,
-            'ResultURL' => $this->baseURL . $resulturl,
+            'QueueTimeOutURL' => $this->clientBaseURL . $timeouturl,
+            'ResultURL' => $this->clientBaseURL . $resulturl,
             'Occasion' => ' '
         );
 
@@ -215,8 +224,8 @@ class MpesaDaraja
             'PartyA' => $shortCode,
             'IdentifierType' => '4',
             'Remarks' => $Remarks,
-            'QueueTimeOutURL' => $this->baseURL . $this->timeOutUrl,
-            'ResultURL' => $this->baseURL . $this->resultUrl
+            'QueueTimeOutURL' => $this->clientBaseURL . $this->timeOutUrl,
+            'ResultURL' => $this->clientBaseURL . $this->resultUrl
         );
 
         return $this->sendRequest($url, $requestBody);
@@ -278,8 +287,8 @@ class MpesaDaraja
             'TransactionID' => $TransactionID,
             'PartyA' => $PartyA,
             'IdentifierType' => '1',
-            'ResultURL' => $this->resultUrl,
-            'QueueTimeOutURL' => $this->baseURL . $this->timeOutUrl,
+            'ResultURL' => $this->clientBaseURL  . $this->resultUrl,
+            'QueueTimeOutURL' => $this->clientBaseURL . $this->timeOutUrl,
             'Remarks' => $Remarks,
             'Occasion' => $Occasion
         );
@@ -337,8 +346,8 @@ class MpesaDaraja
             'PartyB' => $receiverPayBill,
             'AccountReference' => $AccountReference,
             'Remarks' => $Remarks,
-            'QueueTimeOutURL' => $this->baseURL . $this->timeOutUrl,
-            'ResultURL' => $this->baseURL . $this->resultUrl,
+            'QueueTimeOutURL' => $this->clientBaseURL . $this->timeOutUrl,
+            'ResultURL' => $this->clientBaseURL . $this->resultUrl,
         );
 
         return $this->sendRequest($url, $requestBody);
