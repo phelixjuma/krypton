@@ -153,8 +153,8 @@ class MpesaDaraja
             'Amount' => $Amount,
             'ReceiverParty' => $ReceiverParty,
             'ReceiverIdentifierType' => '4',
-            'ResultURL' => $resulturl,
-            'QueueTimeOutURL' => $timeouturl,
+            'ResultURL' => $this->baseURL . $resulturl,
+            'QueueTimeOutURL' => $this->baseURL. $timeouturl,
             'Remarks' => $Remarks,
             'Occasion' => $Occasion
         );
@@ -186,8 +186,8 @@ class MpesaDaraja
             "PartyA" => $this->b2c_paybill,
             "PartyB" => $phoneNumber,
             "Remarks" => $Remarks,
-            'QueueTimeOutURL' => $timeouturl,
-            'ResultURL' => $resulturl,
+            'QueueTimeOutURL' => $this->baseURL . $timeouturl,
+            'ResultURL' => $this->baseURL . $resulturl,
             'Occasion' => ' '
         );
 
@@ -337,8 +337,8 @@ class MpesaDaraja
             'PartyB' => $receiverPayBill,
             'AccountReference' => $AccountReference,
             'Remarks' => $Remarks,
-            'QueueTimeOutURL' => $this->timeOutUrl,
-            'ResultURL' => $this->resultUrl,
+            'QueueTimeOutURL' => $this->baseURL . $this->timeOutUrl,
+            'ResultURL' => $this->baseURL . $this->resultUrl,
         );
 
         return $this->sendRequest($url, $requestBody);
