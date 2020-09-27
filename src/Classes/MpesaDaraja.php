@@ -162,8 +162,8 @@ class MpesaDaraja
             'Amount' => $Amount,
             'ReceiverParty' => $ReceiverParty,
             'ReceiverIdentifierType' => '4',
-            'ResultURL' => $this->clientBaseURL . $resulturl,
-            'QueueTimeOutURL' => $this->clientBaseURL. $timeouturl,
+            'ResultURL' => $resulturl,
+            'QueueTimeOutURL' => $timeouturl,
             'Remarks' => $Remarks,
             'Occasion' => $Occasion
         );
@@ -195,8 +195,8 @@ class MpesaDaraja
             "PartyA" => $this->b2c_paybill,
             "PartyB" => $phoneNumber,
             "Remarks" => $Remarks,
-            'QueueTimeOutURL' => $this->clientBaseURL . $timeouturl,
-            'ResultURL' => $this->clientBaseURL . $resulturl,
+            'QueueTimeOutURL' => $timeouturl,
+            'ResultURL' => $resulturl,
             'Occasion' => ' '
         );
 
@@ -224,8 +224,8 @@ class MpesaDaraja
             'PartyA' => $shortCode,
             'IdentifierType' => '4',
             'Remarks' => $Remarks,
-            'QueueTimeOutURL' => $this->clientBaseURL . $this->timeOutUrl,
-            'ResultURL' => $this->clientBaseURL . $this->resultUrl
+            'QueueTimeOutURL' => $this->timeOutUrl,
+            'ResultURL' => $this->resultUrl
         );
 
         return $this->sendRequest($url, $requestBody);
@@ -287,8 +287,8 @@ class MpesaDaraja
             'TransactionID' => $TransactionID,
             'PartyA' => $PartyA,
             'IdentifierType' => '1',
-            'ResultURL' => $this->clientBaseURL  . $this->resultUrl,
-            'QueueTimeOutURL' => $this->clientBaseURL . $this->timeOutUrl,
+            'ResultURL' => $this->resultUrl,
+            'QueueTimeOutURL' => $this->timeOutUrl,
             'Remarks' => $Remarks,
             'Occasion' => $Occasion
         );
@@ -346,8 +346,8 @@ class MpesaDaraja
             'PartyB' => $receiverPayBill,
             'AccountReference' => $AccountReference,
             'Remarks' => $Remarks,
-            'QueueTimeOutURL' => $this->clientBaseURL . $this->timeOutUrl,
-            'ResultURL' => $this->clientBaseURL . $this->resultUrl,
+            'QueueTimeOutURL' => $this->timeOutUrl,
+            'ResultURL' => $this->resultUrl,
         );
 
         return $this->sendRequest($url, $requestBody);
