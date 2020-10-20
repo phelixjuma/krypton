@@ -186,6 +186,16 @@ final class Data {
     }
 
     /**
+     * Get unique values from an associative array
+     * @param $array
+     * @return array
+     */
+    public static function makeAssociativeArrayUnique($array) {
+        return array_map("unserialize", array_unique(array_map("serialize", $array)));
+
+    }
+
+    /**
      * Format mobile phone numbers. All phone numbers must start with the country code
      * @param String $phoneNumber
      * @param String $countryCode

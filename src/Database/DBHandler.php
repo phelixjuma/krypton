@@ -50,36 +50,36 @@ abstract class DBHandler {
 
         $this->pdo = $pdo;
 
-        $this->table($table);
-
-        $this->prepareModel();
+        $this
+            ->table($table)
+            ->prepareModel();
     }
 
     /**
      * Adds the database PDO adapter
+     *
      * @param \PDO $db
+     * @return $this
      */
     protected function addDbAdapter(\PDO $db) {
         $this->db = $db;
+
+        return $this;
     }
 
     /**
      * Get the database adapter
-     * @param \PDO|null $db
      * @return \PDO
      */
-    public function adapter(
-//        \PDO $db=null
-    ) {
-
-//        $this->db = $db? $db : $this->db;
-
+    public function adapter() {
         return $this->db;
     }
 
     /**
      * Prepare the model.
      * Instantiates the database connection
+     *
+     * @return $this
      */
     protected function prepareModel() {
 
@@ -90,41 +90,20 @@ abstract class DBHandler {
 
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-//        $this->addDbAdapter($this->pdo);
-
-//        $this->adapter()->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-//        try {
-//
-//            $source = Config::getSource();
-//            $user = Config::getDBUser();
-//            $password = Config::getDBPassword();
-//            $pdo = new \PDO($source,$user,$password);
-//            $this->addDbAdapter($pdo);
-//
-//            $this->setKeys();
-//            $this->setColumns();
-//            $this->adapter()->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-//        }
-//        catch (\Exception $ex) {
-//            $title = 'Connection Failed';
-//            switch ($ex->getCode()){
-//                case 2002: $message = 'Attempt to Connect to database failed'; break;
-//                default: $message = $ex->getMessage(); break;
-//            }
-//            $response = json_encode(['message'=>$message,'title'=>$title,'status'=>'error']);
-//            die($response);
-//        }
-
+        return $this;
     }
 
     /**
      * Start database transaction
+     *
+     * @return $this
      */
     public function startTransaction() {
         if($this->adapter()->inTransaction()!==true){
             $this->adapter()->beginTransaction();
         }
+
+        return $this;
     }
 
     /**
@@ -179,6 +158,7 @@ abstract class DBHandler {
     /**
      * Set the table keys
      * Also sets the primary key of the table
+     * @return $this
      */
     public function setKeys() {
         $sql="SHOW INDEX FROM $this->table_name WHERE Key_name = 'PRIMARY' ";
@@ -186,10 +166,14 @@ abstract class DBHandler {
         $statement->execute();
         $result=$statement->fetch(\PDO::FETCH_ASSOC);
         $this->prkey=$result['Column_name'];
+
+        return $this;
     }
 
     /**
      * Set the columns of the table
+     *
+     * @return $this
      */
     public function setColumns() {
         //get table description i.e. metadata
@@ -203,6 +187,8 @@ abstract class DBHandler {
 
         //fetch table columns
         $this->columns = Data::getArrayMap($this->table_meta, 'Field');
+
+        return $this;
     }
 
     /**
@@ -290,8 +276,9 @@ abstract class DBHandler {
 
     /**
      * Set the table name, if exists, otherwise, get the table name
+     *
      * @param null $table_name
-     * @return null
+     * @return $this
      */
     public function table($table_name=null) {
         if($table_name!=null)
@@ -299,7 +286,7 @@ abstract class DBHandler {
             $this->table_name=$table_name;
             $this->join=null;
         }
-        return $this->table_name;
+        return $this;
     }
 
     /**
@@ -464,9 +451,10 @@ abstract class DBHandler {
 
     /**
      * Delete all records from a table
+     * @return int
      */
     public function deleteAll() {
-        $this->delete();
+        return $this->delete();
     }
 
     /**
@@ -596,15 +584,17 @@ abstract class DBHandler {
 
     /**
      * Handle SELECT SQL statement
+     *
      * @param null $criteria
      * @param null $columns
      * @param null $group_by
      * @param null $order_by
      * @param null $limit
      * @param bool $isSearch
+     * @param bool $distinct
      * @return array|null
      */
-    public function select($criteria=null,$columns=null,$group_by=null,$order_by=null,$limit=null, $isSearch = false) {
+    public function select($criteria=null,$columns=null,$group_by=null,$order_by=null,$limit=null, $isSearch = false, $distinct=false) {
 
         $columns = (is_array($columns) && count($columns)>0)?  implode(',', $columns) : '*';
 
@@ -643,7 +633,9 @@ abstract class DBHandler {
             $queryLimit = "LIMIT $limit";
         }
 
-        $sql="SELECT $columns FROM $this->table_name $this->join WHERE $criteria $group_by $order_by $queryLimit ";
+        $distinct_part = $distinct ? "DISTINCT" : "";
+
+        $sql="SELECT $distinct_part $columns FROM $this->table_name $this->join WHERE $criteria $group_by $order_by $queryLimit ";
         $count_sql="SELECT $columns FROM $this->table_name $this->join WHERE $criteria $group_by";
 
        // print $sql."\n";
@@ -699,15 +691,19 @@ abstract class DBHandler {
 
     /**
      * Join database tables
+     *
      * @param $table
      * @param null $on
      * @param null $type
+     * @return $this
      */
     public function join($table,$on=null,$type=null) {
         $default_on=" $this->table_name.$this->prkey=$table.$this->prkey ";
         $on=" ON ".(($on==null)? $default_on : $on);
         $type=strtoupper($type.' JOIN ');
         $this->join = $this->join." $type $table $on ";
+
+        return $this;
     }
 
     /**
