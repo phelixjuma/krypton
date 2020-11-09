@@ -594,7 +594,7 @@ abstract class DBHandler {
      * @param bool $distinct
      * @return array|null
      */
-    public function select($criteria=null,$columns=null,$group_by=null,$order_by=null,$limit=null, $isSearch = false, $distinct=false) {
+    public function select($criteria=null,$columns=null,$group_by=null,$order_by=null,$limit=null, $isSearch = false, $distinct=false, $having=null) {
 
         $columns = (is_array($columns) && count($columns)>0)?  implode(',', $columns) : '*';
 
@@ -635,8 +635,8 @@ abstract class DBHandler {
 
         $distinct_part = $distinct ? "DISTINCT" : "";
 
-        $sql="SELECT $distinct_part $columns FROM $this->table_name $this->join WHERE $criteria $group_by $order_by $queryLimit ";
-        $count_sql="SELECT $columns FROM $this->table_name $this->join WHERE $criteria $group_by";
+        $sql="SELECT $distinct_part $columns FROM $this->table_name $this->join WHERE $criteria $group_by $having $order_by $queryLimit ";
+        $count_sql="SELECT $columns FROM $this->table_name $this->join WHERE $criteria $group_by $having";
 
        // print $sql."\n";
 
