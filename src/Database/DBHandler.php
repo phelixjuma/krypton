@@ -599,8 +599,10 @@ abstract class DBHandler {
         $columns = (is_array($columns) && count($columns)>0)?  implode(',', $columns) : '*';
 
         $group_by = (is_array($group_by) && count($group_by)>0)?  implode(',', $group_by) : $group_by;
-
         $group_by = (strlen(trim($group_by))==0)? null : " GROUP BY ".$group_by;
+
+        $having = (is_array($having) && count($having)>0)?  implode(',', $having) : $having;
+        $having = (strlen(trim($having))==0)? null : " HAVING ".$having;
 
         $order_by = (is_array($order_by) && count($order_by)>0)?  implode(',', $order_by) : $order_by;
 
