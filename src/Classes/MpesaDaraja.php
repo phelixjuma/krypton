@@ -12,11 +12,11 @@ namespace Kuza\Krypton\Classes;
 class MpesaDaraja
 {
 
-    public $timeOutUrl = "safdaraja/timeout";
-    public $resultUrl = "safdaraja/result";
-    public $callbackUrl = "safdaraja/callback";
-    public $confirmationUrl = "safdarara/confirmation";
-    public $validationUrl = "safdaraja/validation";
+    public $timeOutUrl;
+    public $resultUrl;
+    public $callbackUrl;
+    public $confirmationUrl;
+    public $validationUrl;
 
     private $c2b_consumer_key;
     private $c2b_consumer_secret;
@@ -122,6 +122,27 @@ class MpesaDaraja
         if (!empty($publicKeyFile) && !empty($productionKeyFile)) {
             $this->setSecurityCredential($publicKeyFile, $productionKeyFile);
         }
+
+        return $this;
+    }
+
+    /**
+     * Set timeout, result, callback, confirmation and validation urls
+     *
+     * @param null $timeOutUrl
+     * @param null $resultUrl
+     * @param null $callbackUrl
+     * @param null $confirmationUrl
+     * @param null $validationUrl
+     * @return $this
+     */
+    public function setReturnUrls($timeOutUrl = null, $resultUrl = null, $callbackUrl = null, $confirmationUrl = null, $validationUrl = null) {
+
+        $this->timeOutUrl =  $timeOutUrl;
+        $this->resultUrl = $resultUrl;
+        $this->callbackUrl = $callbackUrl;
+        $this->confirmationUrl = $confirmationUrl;
+        $this->validationUrl = $validationUrl;
 
         return $this;
     }
