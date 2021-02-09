@@ -606,7 +606,16 @@ abstract class DBHandler {
 
         $order_by = (is_array($order_by) && count($order_by)>0)?  implode(',', $order_by) : $order_by;
 
-        $order_by = (strlen(trim($order_by))==0)? null : " ORDER BY ".$order_by;
+        $this->primaryKey();
+
+        if (strlen(trim($order_by)) > 0) {
+            $order_by = " ORDER BY ".$order_by;
+        } elseif(!empty($this->primaryKey())) {
+            $order_by = " ORDER BY ".$this->primaryKey(). " DESC";
+        } else {
+            $order_by = null;
+        }
+        //$order_by = (strlen(trim($order_by))==0) ? null : " ORDER BY ".$order_by;
 
         if(is_array($criteria) && count($criteria)>0){
 
