@@ -44,8 +44,8 @@ class JWT {
         $this->issuer = Config::getSiteURL();
         $this->audience = Config::getSiteURL();
         $this->secret = Config::getJWTSecret();
-        $this->issuedAt = Dates::getTimestamp();
-        $this->notBefore = Dates::getTimestamp();
+        $this->issuedAt = time();
+        $this->notBefore = time();
     }
 
     /**
