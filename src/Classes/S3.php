@@ -21,29 +21,58 @@ use Kuza\Krypton\Exceptions\CustomException;
  */
 class S3 {
 
-    const CLOUDFRONT_PRIVATE_KEY = "cloudfront-2018-11-28-private-pk-APKAIYR5D6P6UHWCD4RA.pem";
     private $credentials;
-    private $s3;
     public $bucket;
+
+    /**
+     * @var $s3 S3Client
+     */
+    protected $s3;
 
     /**
      * S3 constructor.
      */
     public function __construct() {
-        $this->credentials = new Credentials(Config::getAWSAccessKey(), Config::getAWSAccessSecret());
+    }
+
+    /**
+     *
+     * @param string $version
+     * @param string $region
+     * @param string $accessKey
+     * @param string $accessSecret
+     * @return $this
+     * @throws \Kuza\Krypton\Exceptions\ConfigurationException
+     */
+    public function init($version="latest", $region="eu-west-1", $accessKey = "", $accessSecret= "") {
+        if (empty($accessKey)) {
+            $accessKey = Config::getAWSAccessKey();
+        }
+        if (empty($accessSecret)) {
+            $accessSecret = Config::getAWSAccessSecret();
+        }
+
+        $this->credentials = new Credentials($accessKey, $accessSecret);
 
         $this->s3 = new S3Client([
-            'version'       => 'latest',
-            'region'        => 'eu-west-1',
+            'version'       => $version,
+            'region'        => $region,
             'credentials'   => $this->credentials
         ]);
+
+        return $this;
     }
 
     /**
      * Set the bucket into which the document is to be uploaded
+     *
+     * @param $bucketName
+     * @return $this
      */
-    public function setBucket() {
-        $this->bucket = "gmoney-public-uploads";
+    public function setBucket($bucketName) {
+        $this->bucket = $bucketName;
+
+        return $this;
     }
 
     /**
@@ -119,30 +148,23 @@ class S3 {
 
     /**
      * Get the id of the CloudFront key pair. This is generated from CloudFront
-     * @return string
-     * @throws CustomException
+     *
+     * @return array|false|string
+     * @throws \Kuza\Krypton\Exceptions\ConfigurationException
      */
     private static function getCloudFrontKeyPairId() {
         return Config::getCloudFrontKeyPairId(); // This is the id of the Cloudfront key pair you generated
     }
 
     /**
-     * Get the directory where the Keys reside
-     * @return string
-     */
-    private static function getKeysDirectory() {
-        return dirname(__DIR__).'/Keys/';
-    }
-
-    /**
      * Get the CloudFront private key
+     *
+     * @param $privateKeyFile
      * @return bool|string
      */
-    private static function getCloudFrontPrivateKey() {
+    private static function getCloudFrontPrivateKey($privateKeyFile) {
 
-        $privateKey = self::getKeysDirectory().self::CLOUDFRONT_PRIVATE_KEY;
-
-        $fp = fopen($privateKey, "r");
+        $fp = fopen($privateKeyFile, "r");
         $privateKey = fread($fp,8192);
         fclose($fp);
 
@@ -154,10 +176,11 @@ class S3 {
      * This is a canned policy
      * @param string $resource full CloudFront url of the resources
      * @param integer $timeout timeout in seconds
+     * @param string $privateKeyFile
      * @return string signed url
      * @throws \Exception
      */
-    public static function getSignedURL($resource, $timeout) {
+    public static function getSignedURL($resource, $timeout, $privateKeyFile) {
 
         // get the key pair id
         $keyPairId = self::getCloudFrontKeyPairId();
@@ -169,7 +192,7 @@ class S3 {
         $policyStatement = '{"Statement":[{"Resource":"'.$resource.'","Condition":{"DateLessThan":{"AWS:EpochTime":'.$expires.'}}}]}';
 
         // Get the CloudFront private key
-        $privateKey = self::getCloudFrontPrivateKey();
+        $privateKey = self::getCloudFrontPrivateKey($privateKeyFile);
 
         // Create the private key
         $key = \openssl_get_privatekey($privateKey);

@@ -17,7 +17,16 @@ use Kreait\Firebase\Exception\RuntimeException;
  */
 class Files {
 
+    /**
+     * @var S3
+     */
     protected $S3;
+
+    private $s3AccessKey;
+    private $s3AccesSecret;
+    private $s3Version;
+    private $s3Region;
+    private $s3bucketName;
 
     /**
      * mime types for images
@@ -82,6 +91,27 @@ class Files {
 
     function __construct( S3 $S3) {
         $this->S3 = $S3;
+    }
+
+    /**
+     * Init S3
+     *
+     * @param $s3AccessKey
+     * @param $s3AccessSecret
+     * @param $bucketName
+     * @param $s3Version
+     * @param $s3Region
+     * @return $this
+     */
+    public function initS3($s3AccessKey, $s3AccessSecret, $bucketName, $s3Version, $s3Region) {
+
+        $this->s3AccessKey = $s3AccessKey;
+        $this->s3AccesSecret = $s3AccessSecret;
+        $this->s3Version = $s3Version;
+        $this->s3Region = $s3Region;
+        $this->s3bucketName = $bucketName;
+
+        return $this;
     }
 
     /**
@@ -283,7 +313,6 @@ class Files {
      * @param $type
      * @param $file
      * @return array
-     * @throws CustomException
      */
     public function uploadFile($type, $file) {
 
@@ -335,9 +364,15 @@ class Files {
                 $fileInfo['file_uri_path'] = $destination_directory;
 
                 $isUploaded = false;
-                $this->S3->setBucket();
+
                 try {
-                    $isUploaded = $this->S3->uploadFile($file['tmp_name'],$destination_directory,$destination_file_name,$fileInfo['mime_type']);
+
+                    $isUploaded = $this
+                        ->S3
+                        ->init($this->s3Version, $this->s3Region, $this->s3AccessKey, $this->s3AccesSecret)
+                        ->setBucket($this->s3bucketName)
+                        ->uploadFile($file['tmp_name'],$destination_directory,$destination_file_name,$fileInfo['mime_type']);
+
                 } catch (\Exception $e) {
                     print $e->getMessage();
                 }
@@ -403,8 +438,8 @@ class Files {
      * Get the contents of a directory
      * @param string $dir the directory whose files and subdirectories are to be retrieved
      * @param string $filter filter the files to be included, if provided
-     * @param type &$results
-     * @return type
+     * @param array &$results
+     * @return array
      */
     private function getDirContents($dir, $filter = '', &$results = array()) {
         if (is_dir($dir)) {
