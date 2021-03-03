@@ -5,6 +5,7 @@ namespace Kuza\Krypton\Database;
 use Kuza\Krypton\Classes\Data;
 use Kuza\Krypton\Classes\Dates;
 use Kuza\Krypton\Database\Predicates\Between;
+use Kuza\Krypton\Framework\RoutesHelper;
 
 class Model extends DBHandler {
 
@@ -25,19 +26,12 @@ class Model extends DBHandler {
      * @param $data
      */
     public function prepareInsertData(&$data) {
-        global $app;
 
         if(Data::arrayValueExists("created_at",$this->getColumns())) {
             $data['created_at'] = Dates::getTimestamp();
         }
         if(Data::arrayValueExists("created_by",$this->getColumns())) {
-            $data['created_by'] = isset($app->currentUser->id) ? $app->currentUser->id : 0;
-        }
-        if(Data::arrayValueExists("updated_at",$this->getColumns())) {
-            $data['updated_at'] = Dates::getTimestamp();
-        }
-        if(Data::arrayValueExists("updated_by",$this->getColumns())) {
-            $data['updated_by'] = isset($app->currentUser->id) ? $app->currentUser->id : 0;
+            $data['created_by'] = isset(RoutesHelper::request()->user) ? RoutesHelper::request()->user->id : 0;
         }
         $data = parent::sanitize($data,false);
     }
@@ -47,13 +41,12 @@ class Model extends DBHandler {
      * @param $data
      */
     public function prepareUpdateData(&$data) {
-        global $app;
 
         if(Data::arrayValueExists("updated_at",$this->getColumns())) {
             $data['updated_at'] = Dates::getTimestamp();
         }
         if(Data::arrayValueExists("updated_by",$this->getColumns())) {
-            $data['updated_by'] = isset($app->currentUser->id) ? $app->currentUser->id : null;
+            $data['updated_by'] = isset(RoutesHelper::request()->user) ? RoutesHelper::request()->user->id : null;
         }
         $data = parent::sanitize($data,false);
 
@@ -64,23 +57,13 @@ class Model extends DBHandler {
      * @param $data
      */
     public function prepareDeleteData(&$data) {
-        global $app;
-
-        if(Data::arrayValueExists("updated_at",$this->getColumns())) {
-            $data['updated_at'] = Dates::getTimestamp();
-        }
-        if(Data::arrayValueExists("updated_by",$this->getColumns())) {
-            $data['updated_by'] = $app->currentUser->id;
-        }
 
         if(Data::arrayValueExists("is_archived",$this->getColumns())) {
             $data['is_archived'] = 1;
         }
-        if(Data::arrayValueExists("updated_by",$this->getColumns())) {
-            $data['updated_by'] = $app->currentUser->id;
-        }
+
         if(Data::arrayValueExists("archived_by",$this->getColumns())) {
-            $data['archived_by'] = $app->currentUser->id;
+            $data['archived_by'] = isset(RoutesHelper::request()->user) ? RoutesHelper::request()->user->id : null;
         }
         if(Data::arrayValueExists("archived_at",$this->getColumns())) {
             $data['archived_at'] = Dates::getTimestamp();
