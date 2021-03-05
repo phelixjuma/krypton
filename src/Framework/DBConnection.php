@@ -32,17 +32,22 @@ class DBConnection extends Model {
 
         try {
 
-            $app_env = Config::getSpecificConfig("APP_ENV");
+            if (!isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection'])) {
 
-            $host = Config::getDBHost();
-            $engine = Config::getDBEngine();
-            $port = Config::getDBPort();
-            $name = $app_env == "testing" ? Config::getSpecificConfig("DB_NAME_TESTING") : Config::getDBName();
+                $app_env = Config::getSpecificConfig("APP_ENV");
 
-            $source = $engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name;
-            $user = Config::getDBUser();
-            $password = Config::getDBPassword();
-            $pdoConnection = new \PDO($source, $user, $password);
+                $host = Config::getDBHost();
+                $engine = Config::getDBEngine();
+                $port = Config::getDBPort();
+                $name = $app_env == "testing" ? Config::getSpecificConfig("DB_NAME_TESTING") : Config::getDBName();
+
+                $source = $engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name;
+                $user = Config::getDBUser();
+                $password = Config::getDBPassword();
+
+                $GLOBALS['pdoConnection'] = new \PDO($source, $user, $password);
+            }
+
 
         } catch (\Exception $ex) {
             $title = 'Connection Failed';
@@ -58,6 +63,6 @@ class DBConnection extends Model {
             die($response);
         }
 
-        return $pdoConnection;
+        return $GLOBALS['pdoConnection'];
     }
 }
