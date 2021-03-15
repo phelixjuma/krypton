@@ -60,11 +60,11 @@ final class Utils {
     public static function escape($input) {
         if(is_array($input)){
             array_walk_recursive($input,function (&$val,$key){
-                $val = htmlspecialchars(trim($val), ENT_QUOTES);
+                $val = htmlspecialchars(urldecode(trim($val)), ENT_QUOTES);
             });
             return $input;
         }
-        return htmlspecialchars(trim($input), ENT_QUOTES);
+        return htmlspecialchars(urldecode(trim($input)), ENT_QUOTES);
     }
 
     /**

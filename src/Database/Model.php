@@ -74,9 +74,12 @@ class Model extends DBHandler {
 
     /**
      * Prepare a selection criteria
+     *
      * @param null $criteria
+     * @param null $alias
+     * @return $this
      */
-    public function prepareCriteria(&$criteria = null) {
+    public function prepareCriteria(&$criteria = null, $alias = null) {
 
         //check if the key exists in the field
         if(Data::arrayValueExists("is_archived",$this->getColumns()) && !isset($criteria['is_archived'])) {
@@ -103,12 +106,19 @@ class Model extends DBHandler {
         if(!empty($startDate) && !empty($endDate)) {
             $criteria[] = new Between("DATE({$this->table_name}.created_at)", [$startDate, $endDate], "created_at");
         }
+
+        if (!is_null($alias)) {
+            $this->prepareCriteriaAlias($cr, $alias);
+        }
+        return $this;
     }
 
     /**
      * Prepare criteria alias
+     *
      * @param $criteria
      * @param $alias
+     * @return $this
      */
     public function prepareCriteriaAlias(&$criteria,$alias) {
         $newCriteria = [];
@@ -118,6 +128,8 @@ class Model extends DBHandler {
             unset($criteria[$key]);
         }
         $criteria = $newCriteria;
+
+        return $this;
     }
 
     /**
