@@ -81,6 +81,8 @@ final class App {
     private $logs_directory = "Logs";
     private $routes_file = "routes";
 
+    private $document_root;
+
     /**
      * Initialize the system
      *
@@ -88,6 +90,8 @@ final class App {
      * @throws Exceptions\ConfigurationException
      */
     public function init($document_root = "") {
+
+        $this->document_root = !empty($document_root) ? $document_root : getcwd();
 
         //set spl autoload
         spl_autoload_register([$this, 'loadClass']);
@@ -105,8 +109,7 @@ final class App {
 
         // load the environment file
         try {
-            $document_root = !empty($document_root) ? $document_root : getcwd();
-            $dotenv = Dotenv::createImmutable($document_root);
+            $dotenv = Dotenv::createImmutable($this->document_root);
             $dotenv->load();
         } catch (\Exception $e) {
             //print_r($e->getMessage());
@@ -265,7 +268,7 @@ final class App {
 
         #call_user_func( array( $obj, 'method' ), "");
 
-        require $this->getRouteDefinitions();
+        include $this->getRouteDefinitions();
 
         /**
          * The default namespace for route-callbacks, so we don't have to specify it each time.
@@ -296,10 +299,12 @@ final class App {
         }
 
         //we replace the backslash in the namespace with the directory seperator and add the class extension
-        $classFile = str_ireplace("\\",$directorySeperator, $namespace).".php";
+        $classFile = $this->document_root .$directorySeperator. str_ireplace("\\",$directorySeperator, $namespace).".php";
 
         if(is_file($classFile)){
             require_once  $classFile;
+        } else {
+            echo "file does not exist: ". $classFile;
         }
     }
 
