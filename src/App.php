@@ -83,9 +83,11 @@ final class App {
 
     /**
      * Initialize the system
-     * @throws \Kuza\Krypton\Exceptions\ConfigurationException
+     *
+     * @param string $document_root
+     * @throws Exceptions\ConfigurationException
      */
-    public function init() {
+    public function init($document_root = "") {
 
         //set spl autoload
         spl_autoload_register([$this, 'loadClass']);
@@ -103,10 +105,11 @@ final class App {
 
         // load the environment file
         try {
-            $dotenv = Dotenv::createImmutable(getcwd());
+            $document_root = !empty($document_root) ? $document_root : getcwd();
+            $dotenv = Dotenv::createImmutable($document_root);
             $dotenv->load();
         } catch (\Exception $e) {
-//            print_r($e->getMessage());
+            //print_r($e->getMessage());
         }
 
         try {
