@@ -42,11 +42,11 @@ class MpesaDaraja
     /**
      * MpesaDaraja constructor.
      *
-     * Default uses sandbox
+     * Default uses live
      */
     public function __construct() {
-        $this->baseURL = $this->sandbox_base_url;
         $this->setClientBaseUrl();
+        $this->useLive();
     }
 
     /**
