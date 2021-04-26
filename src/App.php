@@ -87,9 +87,12 @@ final class App {
      * Initialize the system
      *
      * @param string $document_root
+     * @param null $memory_limit
+     * @param null $upload_max_filesize
+     * @param null $post_max_size
      * @throws Exceptions\ConfigurationException
      */
-    public function init($document_root = "") {
+    public function init($document_root = "", $memory_limit=null, $upload_max_filesize=null, $post_max_size=null) {
 
         $this->document_root = !empty($document_root) ? $document_root : getcwd();
 
@@ -129,9 +132,9 @@ final class App {
         ini_set("log_errors", 1);
         ini_set("error_log", $this->logs_directory . "/" .date("Y-m-d", time()). "-errors.log");
         ini_set("ignore_repeated_errors", 1);
-        ini_set('memory_limit', '1024M');
-        ini_set('upload_max_filesize', '1024M');
-        ini_set('post_max_size', '1024M');
+        ini_set('memory_limit', $memory_limit ?? '1024M');
+        ini_set('upload_max_filesize', $upload_max_filesize ?? '1024M');
+        ini_set('post_max_size', $post_max_size ?? '1024M');
 
         mb_internal_encoding('UTF-8');
 
