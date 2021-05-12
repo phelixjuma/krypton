@@ -30,7 +30,7 @@ class Model extends DBHandler {
         if((!isset($data['created_at']) || empty($data['created_at'])) && Data::arrayValueExists("created_at",$this->getColumns())) {
             $data['created_at'] = Dates::getTimestamp();
         }
-        if(Data::arrayValueExists("created_by",$this->getColumns())) {
+        if((!isset($data['created_by']) || empty($data['created_by'])) && Data::arrayValueExists("created_by",$this->getColumns())) {
             $data['created_by'] = isset(RoutesHelper::request()->user) ? RoutesHelper::request()->user->id : 0;
         }
         $data = parent::sanitize($data,false);
