@@ -27,7 +27,7 @@ class Model extends DBHandler {
      */
     public function prepareInsertData(&$data) {
 
-        if(Data::arrayValueExists("created_at",$this->getColumns())) {
+        if((!isset($data['created_at']) || empty($data['created_at'])) && Data::arrayValueExists("created_at",$this->getColumns())) {
             $data['created_at'] = Dates::getTimestamp();
         }
         if(Data::arrayValueExists("created_by",$this->getColumns())) {
