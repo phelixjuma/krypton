@@ -517,6 +517,7 @@ final class Requests {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
 
             $response = curl_exec($ch);
             $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
