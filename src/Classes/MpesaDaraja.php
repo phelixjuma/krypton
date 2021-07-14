@@ -138,11 +138,11 @@ class MpesaDaraja
      */
     public function setReturnUrls($timeOutUrl = null, $resultUrl = null, $callbackUrl = null, $confirmationUrl = null, $validationUrl = null) {
 
-        $this->timeOutUrl =  $timeOutUrl;
-        $this->resultUrl = $resultUrl;
-        $this->callbackUrl = $callbackUrl;
-        $this->confirmationUrl = $confirmationUrl;
-        $this->validationUrl = $validationUrl;
+        $this->timeOutUrl =  $timeOutUrl ?? $this->baseURL;
+        $this->resultUrl = $resultUrl ?? $this->baseURL;
+        $this->callbackUrl = $callbackUrl ?? $this->baseURL;
+        $this->confirmationUrl = $confirmationUrl ?? $this->baseURL;
+        $this->validationUrl = $validationUrl ?? $this->baseURL;
 
         return $this;
     }
@@ -169,7 +169,7 @@ class MpesaDaraja
      * @param $resulturl
      * @return mixed
      */
-    public function TransactionReversal($TransactionID, $Amount, $ReceiverParty, $Remarks, $Occasion = null, $timeouturl, $resulturl){
+    public function TransactionReversal($TransactionID, $Amount, $ReceiverParty, $Remarks, $Occasion = null, $timeouturl="", $resulturl=""){
         $commandId = "TransactionReversal";
 
         $url = $this->baseURL . 'mpesa/reversal/v1/request';
