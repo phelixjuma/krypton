@@ -682,7 +682,7 @@ abstract class DBHandler {
      */
     public function selectCustomQuery($sql, $params = []) {
 
-        if (preg_match('/(?i)(INSERT\s+INTO|UPDATE|DELETE\s+FROM|DROP\s+TABLE|DROP\s+DATABASE)(?-i)\s+/', $sql))
+        if (preg_match('/(?i)(INSERT\s+INTO|UPDATE|DELETE\s+FROM|DROP\s+TABLE|DROP\s+DATABASE|DESCRIBE)(?-i)\s+/', $sql))
         {
             throw new CustomException("Unsupported query");
         }
