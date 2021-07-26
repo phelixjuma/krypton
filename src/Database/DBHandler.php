@@ -3,7 +3,6 @@
 namespace Kuza\Krypton\Database;
 
 use Kuza\Krypton\Classes\Data;
-use Kuza\Krypton\Config\Config;
 
 use Kuza\Krypton\Database\Predicates\Between;
 use Kuza\Krypton\Database\Predicates\DateDiffGreaterThanOrEqualTo;
@@ -12,6 +11,7 @@ use Kuza\Krypton\Database\Predicates\JsonContains;
 use Kuza\Krypton\Database\Predicates\NestedAnd;
 use Kuza\Krypton\Database\Predicates\NestedOr;
 use Kuza\Krypton\Database\Predicates\PredicateFunction;
+use Kuza\Krypton\Exceptions\CustomException;
 
 abstract class DBHandler {
 
@@ -674,17 +674,25 @@ abstract class DBHandler {
 
     /**
      * Execute a custom select query
+     *
      * @param $sql
+     * @param array $params
      * @return array
+     * @throws CustomException
      */
-    public function selectCustomQuery($sql) {
+    public function selectCustomQuery($sql, $params = []) {
+
+        if (preg_match('/(?i)(INSERT\s+INTO|UPDATE|DELETE\s+FROM|DROP\s+TABLE|DROP\s+DATABASE)(?-i)\s+/', $sql))
+        {
+            throw new CustomException("Unsupported query");
+        }
 
         $response = [];
 
         try {
             $stmt = $this->adapter()->prepare($sql);
 
-            $stmt->execute();
+            $stmt->execute($params);
 
             // set the resulting array to associative
             $stmt->setFetchMode(\PDO::FETCH_ASSOC);
