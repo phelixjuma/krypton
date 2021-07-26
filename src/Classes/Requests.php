@@ -519,12 +519,24 @@ final class Requests {
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
 
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+
             $response = curl_exec($ch);
             $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            $error_msg = null;
+            if (curl_errno($ch)) {
+                $error_msg = curl_error($ch);
+            }
+
             curl_close($ch);
 
             if (FALSE == $response || null == $response) {
-                throw new HttpException("Curl failed for the request: $type $endpoint");
+                if ($error_msg == null) {
+                    $error_msg = "Curl failed for the request: $type $endpoint";
+                }
+                throw new HttpException($error_msg);
             }
 
             return [
@@ -533,6 +545,7 @@ final class Requests {
             ];
 
         } catch (\Exception $e) {
+
             throw new HttpException($e->getMessage(), $e->getCode());
         }
     }
