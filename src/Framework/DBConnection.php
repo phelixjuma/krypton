@@ -18,15 +18,15 @@ class DBConnection extends Model {
      * DBConnection constructor.
      * @param null $table
      */
-    public function __construct($table = null) {
+    public function __construct($table = null, $database = null) {
 
-        parent::__construct($this->dbConnection(), $table);
+        parent::__construct($this->dbConnection($database), $table);
     }
 
     /**
      * Connect to the database. Sets the PDO connection.
      */
-    private function dbConnection() {
+    private function dbConnection($db_name = null) {
 
         $pdoConnection = null;
 
@@ -40,6 +40,9 @@ class DBConnection extends Model {
                 $engine = Config::getDBEngine();
                 $port = Config::getDBPort();
                 $name = $app_env == "testing" ? Config::getSpecificConfig("DB_NAME_TESTING") : Config::getDBName();
+                if ($db_name !== null) {
+                    $name = $db_name;
+                }
 
                 $source = $engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name;
                 $user = Config::getDBUser();
