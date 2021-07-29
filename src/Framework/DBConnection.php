@@ -32,7 +32,7 @@ class DBConnection extends Model {
 
         try {
 
-            if (!isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection'])) {
+            if ($db_name == null && (!isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection']))) {
 
                 $app_env = Config::getSpecificConfig("APP_ENV");
 
