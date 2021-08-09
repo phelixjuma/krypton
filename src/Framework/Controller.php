@@ -15,9 +15,7 @@ use Kuza\Krypton\Classes\Response;
 use Kuza\Krypton\Exceptions\CustomException;
 use Kuza\Krypton\App;
 use Rakit\Validation\Validator;
-use Pecee\SimpleRouter\SimpleRouter as Router;
 use Pecee\Http\Url;
-use Pecee\Http\Response as HttpResponse;
 use Pecee\Http\Request;
 
 class Controller {
@@ -73,7 +71,7 @@ class Controller {
      * @param int $totalRecords
      * @throws CustomException
      */
-    public function apiResponse(int $code = Requests::RESPONSE_OK, bool $success = true, string $message = "", $data = [], $errors = [], int $totalRecords = 0) {
+    public function apiResponse(int $code = Requests::RESPONSE_OK, bool $success = true, string $message = "", $data = null, $errors = [], int $totalRecords = 0) {
 
         $this->app->benchmark->stop();
 
