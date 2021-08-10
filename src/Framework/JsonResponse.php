@@ -14,7 +14,7 @@ class JsonResponse {
 
     public $success = false;
     public $message = "";
-    public $data = null;
+    public $data = [];
     public $errors = [];
     public $meta = [
         "total_records" => 0,

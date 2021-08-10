@@ -71,7 +71,7 @@ class Controller {
      * @param int $totalRecords
      * @throws CustomException
      */
-    public function apiResponse(int $code = Requests::RESPONSE_OK, bool $success = true, string $message = "", $data = null, $errors = [], int $totalRecords = 0) {
+    public function apiResponse(int $code = Requests::RESPONSE_OK, bool $success = true, string $message = "", $data = [], $errors = [], int $totalRecords = 0) {
 
         $this->app->benchmark->stop();
 
