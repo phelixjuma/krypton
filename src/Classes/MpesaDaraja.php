@@ -232,7 +232,7 @@ class MpesaDaraja
      * @param null $Remarks
      * @return mixed
      */
-    public function AccountBalance($shortCode, $Remarks = null){
+    public function AccountBalance($shortCode, $resultUrl, $timeOutUrl, $Remarks = null){
         $commandId = "AccountBalance";
 
         $url = $this->baseURL . 'mpesa/accountbalance/v1/query';
@@ -245,8 +245,8 @@ class MpesaDaraja
             'PartyA' => $shortCode,
             'IdentifierType' => '4',
             'Remarks' => $Remarks,
-            'QueueTimeOutURL' => $this->timeOutUrl,
-            'ResultURL' => $this->resultUrl
+            'QueueTimeOutURL' => $timeOutUrl,
+            'ResultURL' => $resultUrl
         );
 
         return $this->sendRequest($url, $requestBody);
@@ -295,7 +295,7 @@ class MpesaDaraja
      * @param null $Occasion
      * @return mixed
      */
-    public function TransactionStatusQuery($TransactionID, $PartyA, $Remarks, $Occasion = null){
+    public function TransactionStatusQuery($TransactionID, $PartyA, $Remarks, $resultUrl, $timeOutUrl, $Occasion = null){
         $commandId = "TransactionStatusQuery";
 
         $url = $this->baseURL . 'mpesa/transactionstatus/v1/query';
@@ -308,8 +308,8 @@ class MpesaDaraja
             'TransactionID' => $TransactionID,
             'PartyA' => $PartyA,
             'IdentifierType' => '1',
-            'ResultURL' => $this->resultUrl,
-            'QueueTimeOutURL' => $this->timeOutUrl,
+            'ResultURL' => $resultUrl,
+            'QueueTimeOutURL' => $timeOutUrl,
             'Remarks' => $Remarks,
             'Occasion' => $Occasion
         );
@@ -350,7 +350,7 @@ class MpesaDaraja
      * @param null $Remarks
      * @return mixed
      */
-    public function BusinessPayBill($Amount, $receiverPayBill, $AccountReference, $ReceiverIdentifierType = "Shortcode",$SenderIdentifierType = "Shortcode", $Remarks = null){
+    public function BusinessPayBill($Amount, $receiverPayBill, $AccountReference, $resultUrl, $timeOutUrl, $ReceiverIdentifierType = "Shortcode",$SenderIdentifierType = "Shortcode", $Remarks = null,){
         $commandId = "BusinessPayBill";
 
         $url = $this->baseURL . 'mpesa/b2b/v1/paymentrequest';
@@ -367,8 +367,8 @@ class MpesaDaraja
             'PartyB' => $receiverPayBill,
             'AccountReference' => $AccountReference,
             'Remarks' => $Remarks,
-            'QueueTimeOutURL' => $this->timeOutUrl,
-            'ResultURL' => $this->resultUrl,
+            'QueueTimeOutURL' => $timeOutUrl,
+            'ResultURL' => $resultUrl,
         );
 
         return $this->sendRequest($url, $requestBody);
@@ -407,7 +407,8 @@ class MpesaDaraja
      * @param $TransactionDesc
      * @return mixed
      */
-    public function CheckIdentity($Amount, $phoneNumber, $AccountReference, $TransactionDesc){
+    public function CheckIdentity($Amount, $phoneNumber, $AccountReference, $TransactionDesc, $callbackUrl) {
+
         $commandId = "CheckIdentity";
 
         $url = $this->baseURL . 'mpesa/stkpush/v1/processrequest';
@@ -423,7 +424,7 @@ class MpesaDaraja
             'PartyA' => $phoneNumber,
             'PartyB' => $this->c2b_paybill,
             'PhoneNumber' => $phoneNumber,
-            'CallBackURL' => $this->callbackUrl,
+            'CallBackURL' => $callbackUrl,
             'AccountReference' => $AccountReference,
             'TransactionDesc' => $TransactionDesc
         );
