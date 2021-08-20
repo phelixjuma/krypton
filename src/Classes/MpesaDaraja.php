@@ -350,7 +350,7 @@ class MpesaDaraja
      * @param null $Remarks
      * @return mixed
      */
-    public function BusinessPayBill($Amount, $receiverPayBill, $AccountReference, $resultUrl, $timeOutUrl, $ReceiverIdentifierType = "Shortcode",$SenderIdentifierType = "Shortcode", $Remarks = null,){
+    public function BusinessPayBill($Amount, $receiverPayBill, $AccountReference, $resultUrl, $timeOutUrl, $ReceiverIdentifierType = "Shortcode",$SenderIdentifierType = "Shortcode", $Remarks = null){
         $commandId = "BusinessPayBill";
 
         $url = $this->baseURL . 'mpesa/b2b/v1/paymentrequest';
