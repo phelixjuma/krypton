@@ -87,7 +87,8 @@ class Files {
         // open office
         'odt' => 'application/vnd.oasis.opendocument.text',
         'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-        'csv' => 'text/csv'
+        // csv
+        'csv' => 'text/plain'
     ];
 
     function __construct( S3 $S3) {
