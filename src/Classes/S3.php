@@ -76,6 +76,29 @@ class S3 {
     }
 
     /**
+     * @param $fullFileName
+     * @return bool|void
+     */
+    public function deleteFile($fullFileName) {
+        
+        try
+        {
+            $result = $this->s3->deleteObject([
+                'Bucket'        => $this->bucket,
+                'Key'           => $fullFileName
+            ]);
+
+            if ($result['DeleteMarker'])  {
+                return true;
+            }
+        }
+        catch (S3Exception $e) {
+            exit('Error: ' . $e->getAwsErrorMessage() . PHP_EOL);
+        }
+        return  false;
+    }
+
+    /**
      * Upload a file to AWS.
      * This uploads files without generating a signed CloudFront URL
      * @param $source_file

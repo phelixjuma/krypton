@@ -391,6 +391,21 @@ class Files {
     }
 
     /**
+     * @param $fileName
+     * @return bool|void
+     * @throws \Kuza\Krypton\Exceptions\ConfigurationException
+     */
+    public function deleteFileFromS3($fileName) {
+
+        return $this
+            ->S3
+            ->init($this->s3Version, $this->s3Region, $this->s3AccessKey, $this->s3AccesSecret)
+            ->setBucket($this->s3bucketName)
+            ->deleteFile($$fileName);
+
+    }
+
+    /**
      * function to delete a file
      * @param string $file the file to be deleted
      * @return boolean
