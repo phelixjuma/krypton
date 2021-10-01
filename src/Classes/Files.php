@@ -86,7 +86,8 @@ class Files {
         'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
         // open office
         'odt' => 'application/vnd.oasis.opendocument.text',
-        'ods' => 'application/vnd.oasis.opendocument.spreadsheet'
+        'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+        'csv' => 'text/csv'
     ];
 
     function __construct( S3 $S3) {
