@@ -204,7 +204,7 @@ final class Data {
     public static function formatPhoneNumber($phoneNumber, $countryCode = "254") {
 
         // Check if starts with '+'
-        $phoneNumber = trim(str_replace("+", "", $phoneNumber));
+        $phoneNumber = preg_replace('/\s+/', '', str_replace("+", "", $phoneNumber));
 
         //check if the first 3 characters are the same as the country code.
         if (substr($phoneNumber, 0, 3) == $countryCode) {
