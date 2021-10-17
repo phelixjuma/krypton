@@ -201,25 +201,23 @@ final class Data {
      * @param String $countryCode
      * @return String
      */
-    public static function formatPhoneNumber($phoneNumber, $countryCode = "+254") {
-        //check if the first 4 characaters are the same as the country code.
-        if (substr($phoneNumber, 0, 4) == $countryCode) {
-            return $phoneNumber;
-        }
+    public static function formatPhoneNumber($phoneNumber, $countryCode = "254") {
 
-        //check if the first 3 characters are the same as the country code minus the + sign.
-        $mCountryCode = str_replace("+", "", $countryCode);
-        if (substr($phoneNumber, 0, 3) == $mCountryCode) {
-            return "+" . $phoneNumber;
+        // Check if starts with '+'
+        $phoneNumber = str_replace("+", "", $phoneNumber);
+
+        //check if the first 3 characters are the same as the country code.
+        if (substr($phoneNumber, 0, 3) == $countryCode) {
+            return $phoneNumber;
         }
 
         //check if the phone number starts with a 0.
         if (substr($phoneNumber, 0, 1) == "0") {
-        //replace the zero with the country code
+            //replace the zero with the country code
             return substr_replace($phoneNumber, $countryCode, 0, 1);
         }
-
-        return null;
+        // prepend 254
+        return $countryCode . $phoneNumber;
     }
 
     /**
