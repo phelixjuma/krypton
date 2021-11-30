@@ -12,6 +12,7 @@ namespace Kuza\Krypton\Framework;
 
 class JsonResponse {
 
+    public $code = null;
     public $success = false;
     public $message = "";
     public $data = [];

@@ -75,6 +75,7 @@ class Controller {
 
         $this->app->benchmark->stop();
 
+        $this->jsonResponse->code = $code;
         $this->jsonResponse->success = $success;
         $this->jsonResponse->message = $message;
         $this->jsonResponse->data = $data;
