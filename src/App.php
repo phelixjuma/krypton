@@ -83,6 +83,9 @@ final class App {
 
     private $document_root;
 
+    public $log_access = 0;
+    public $access_log_handler = [];
+
     /**
      * Initialize the system
      *

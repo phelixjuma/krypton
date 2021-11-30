@@ -75,6 +75,10 @@ class Controller {
 
         $this->app->benchmark->stop();
 
+        if ($this->app->log_access == 1) {
+            $this->logAccess();
+        }
+
         $this->jsonResponse->success = $success;
         $this->jsonResponse->message = $message;
         $this->jsonResponse->data = $data;
@@ -127,6 +131,13 @@ class Controller {
             return $errors;
         }
         return true;
+    }
+
+    /**
+     *
+     */
+    public function logAccess() {
+        call_user_func($this->app->access_log_handler, $this->app);
     }
 
 }
