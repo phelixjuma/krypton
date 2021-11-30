@@ -137,7 +137,7 @@ class Controller {
      *
      */
     public function logAccess() {
-        call_user_func($this->app->access_log_handler, $this->app);
+        call_user_func($this->app->access_log_handler, $this->app, $this->jsonResponse);
     }
 
 }
