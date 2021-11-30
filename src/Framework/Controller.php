@@ -75,10 +75,6 @@ class Controller {
 
         $this->app->benchmark->stop();
 
-        if ($this->app->log_access == 1) {
-            $this->logAccess();
-        }
-
         $this->jsonResponse->success = $success;
         $this->jsonResponse->message = $message;
         $this->jsonResponse->data = $data;
@@ -89,6 +85,10 @@ class Controller {
             $this->jsonResponse->meta['benchmark'] = $this->app->benchmark->results()->format()->toArray();
         }
 
+        // access log
+        if ($this->app->log_access == 1) {
+            $this->logAccess();
+        }
 
         //Send response
         $this->response->status_code($code)->json($this->jsonResponse->toArray());
