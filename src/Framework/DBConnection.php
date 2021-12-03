@@ -48,7 +48,11 @@ class DBConnection extends Model {
                 $user = Config::getDBUser();
                 $password = Config::getDBPassword();
 
-                $GLOBALS['pdoConnection'] = new \PDO($source, $user, $password);
+                $GLOBALS['pdoConnection'] = new \PDO($source, $user, $password, array(
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_PERSISTENT => false,
+                    \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+                ));
             }
 
 
