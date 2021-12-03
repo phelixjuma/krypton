@@ -44,7 +44,7 @@ class DBConnection extends Model {
                     $name = $db_name;
                 }
 
-                $source = $engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name;
+                $source = $engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4";
                 $user = Config::getDBUser();
                 $password = Config::getDBPassword();
 
