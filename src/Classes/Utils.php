@@ -76,7 +76,14 @@ final class Utils {
         return html_entity_decode(htmlspecialchars_decode($string, ENT_NOQUOTES));
     }
 
-
+    /**
+     * Unescape characters including quotes
+     * @param string $string
+     * @return string
+     */
+    public static function full_unescape($string) {
+        return html_entity_decode(htmlspecialchars_decode($string, ENT_QUOTES), ENT_QUOTES);
+    }
 
     /**
      * Check if a request is an ajax request
