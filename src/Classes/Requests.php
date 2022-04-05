@@ -144,27 +144,43 @@ final class Requests {
 
         $ip_address = "";
 
-        foreach (array(
-                     'HTTP_CLIENT_IP',
-                     'HTTP_X_FORWARDED_FOR',
-                     'HTTP_X_FORWARDED',
-                     'HTTP_X_CLUSTER_CLIENT_IP',
-                     'HTTP_FORWARDED_FOR',
-                     'HTTP_FORWARDED',
-                     'REMOTE_ADDR') as $key) {
-            if (array_key_exists($key, $_SERVER)) {
-                foreach (explode(',', $_SERVER[$key]) as $ip) {
-                    $ip = trim($ip);
-                    if ((bool) filter_var($ip, FILTER_VALIDATE_IP,
-                        FILTER_FLAG_IPV4 |
-                        FILTER_FLAG_NO_PRIV_RANGE |
-                        FILTER_FLAG_NO_RES_RANGE)) {
-                        $ip_address =  $ip;
-                        break;
-                    }
-                }
-            }
+        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) && filter_var(trim($_SERVER["HTTP_CF_CONNECTING_IP"]), FILTER_VALIDATE_IP,
+                FILTER_FLAG_IPV4 |
+                FILTER_FLAG_NO_PRIV_RANGE |
+                FILTER_FLAG_NO_RES_RANGE)) {
+            $ip_address =  trim($_SERVER["HTTP_CF_CONNECTING_IP"]);
+        } elseif (isset($_SERVER["HTTP_X_FORWARDED_FOR"]) && filter_var(trim($_SERVER["HTTP_X_FORWARDED_FOR"]), FILTER_VALIDATE_IP,
+                FILTER_FLAG_IPV4 |
+                FILTER_FLAG_NO_PRIV_RANGE |
+                FILTER_FLAG_NO_RES_RANGE)) {
+            $ip_address =  trim($_SERVER["HTTP_X_FORWARDED_FOR"]);
+        } elseif (isset($_SERVER["HTTP_X_FORWARDED"]) && filter_var(trim($_SERVER["HTTP_X_FORWARDED"]), FILTER_VALIDATE_IP,
+                FILTER_FLAG_IPV4 |
+                FILTER_FLAG_NO_PRIV_RANGE |
+                FILTER_FLAG_NO_RES_RANGE)) {
+            $ip_address =  trim($_SERVER["HTTP_X_FORWARDED"]);
+        } elseif (isset($_SERVER["HTTP_FORWARDED_FOR"]) && filter_var(trim($_SERVER["HTTP_FORWARDED_FOR"]), FILTER_VALIDATE_IP,
+                FILTER_FLAG_IPV4 |
+                FILTER_FLAG_NO_PRIV_RANGE |
+                FILTER_FLAG_NO_RES_RANGE)) {
+            $ip_address =   trim($_SERVER["HTTP_FORWARDED_FOR"]);
+        } elseif (isset($_SERVER["REMOTE_ADDR"]) && filter_var(trim($_SERVER["REMOTE_ADDR"]), FILTER_VALIDATE_IP,
+                FILTER_FLAG_IPV4 |
+                FILTER_FLAG_NO_PRIV_RANGE |
+                FILTER_FLAG_NO_RES_RANGE)) {
+            $ip_address =   trim($_SERVER["REMOTE_ADDR"]);
+        } elseif (isset($_SERVER["HTTP_CLIENT_IP"]) && filter_var(trim($_SERVER["HTTP_CLIENT_IP"]), FILTER_VALIDATE_IP,
+                FILTER_FLAG_IPV4 |
+                FILTER_FLAG_NO_PRIV_RANGE |
+                FILTER_FLAG_NO_RES_RANGE)) {
+            $ip_address =   trim($_SERVER["HTTP_CLIENT_IP"]);
+        } elseif (isset($_SERVER["HTTP_X_CLUSTER_CLIENT_IP"]) && filter_var(trim($_SERVER["HTTP_X_CLUSTER_CLIENT_IP"]), FILTER_VALIDATE_IP,
+                FILTER_FLAG_IPV4 |
+                FILTER_FLAG_NO_PRIV_RANGE |
+                FILTER_FLAG_NO_RES_RANGE)) {
+            $ip_address =   trim($_SERVER["HTTP_X_CLUSTER_CLIENT_IP"]);
         }
+
         $this->ip_address = Utils::escape($ip_address);
 
         return $this;
