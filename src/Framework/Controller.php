@@ -92,7 +92,11 @@ class Controller {
         }
 
         //Send response
-        $this->response->status_code($code)->json($this->jsonResponse->toArray());
+        if ($this->requests->download == true) {
+            $this->response->status_code($code)->download($this->jsonResponse->toArray());
+        } else {
+            $this->response->status_code($code)->json($this->jsonResponse->toArray());
+        }
     }
 
     /**
