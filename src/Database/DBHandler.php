@@ -426,13 +426,14 @@ abstract class DBHandler {
     /**
      * Handle DELETE SQL statement
      * @param $criteria
+     * @param $named_tables
      * @return int
      */
-    public function delete($criteria) {
+    public function delete($criteria, $named_tables="") {
 
         $cpv=self::createColumnsParamsValues($criteria);
 
-        $sql="DELETE FROM `$this->table_name` WHERE ".
+        $sql="DELETE $named_tables FROM `$this->table_name` WHERE ".
             implode(" AND ",$cpv['columns_equals_params']);
 
         $statement=$this->createStatement($sql,$cpv['params'],$cpv['values']);
