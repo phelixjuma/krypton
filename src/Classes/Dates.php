@@ -204,6 +204,67 @@ final class Dates {
     }
 
     /**
+     * The ISO 8601 standard for duration is a string in the form of P{y}Y{m1}M{d}DT{h}H{m2}M{s}S where the {*} parts
+     * are replaced by a number value indicating how long the duration is
+     * P is the duration designator (for period) placed at the start of the duration representation.
+     * Y is the year designator that follows the value for the number of calendar years.
+     * M is the month designator that follows the value for the number of calendar months.
+     * W is the week designator that follows the value for the number of weeks.
+     * D is the day designator that follows the value for the number of calendar days.
+     * T is the time designator that precedes the time components of the representation.
+     * H is the hour designator that follows the value for the number of hours.
+     * M is the minute designator that follows the value for the number of minutes.
+     * S is the second designator that follows the value for the number of seconds.
+     *
+     * @param $startDate
+     * @param string $timezone
+     * @param null $years
+     * @param null $months
+     * @param null $weeks
+     * @param null $days
+     * @param null $hours
+     * @param null $minutes
+     * @param null $seconds
+     * @return string
+     * @throws \Exception
+     */
+    public function addDurationToTime($startDate, $timezone='Africa/Nairobi', $years=null, $months=null, $weeks=null,$days=null, $hours=null,$minutes=null,$seconds=null) {
+
+        $time = new DateTime($startDate);
+        $time->setTimezone(new \DateTimeZone($timezone));
+
+        $duration = "P";
+        if (!empty($years)) {
+            $duration .= "{$years}Y";
+        }
+        if (!empty($months)) {
+            $duration .= "{$months}M";
+        }
+        if (!empty($weeks)) {
+            $duration .= "{$weeks}W";
+        }
+        if (!empty($days)) {
+            $duration .= "{$days}D";
+        }
+        if (!empty($hours) || !empty($minutes) || !empty($seconds)) {
+            $duration .="T";
+            if (!empty($hours)) {
+                $duration .= "{$hours}H";
+            }
+            if (!empty($minutes)) {
+                $duration .= "{$minutes}M";
+            }
+            if (!empty($seconds)) {
+                $duration .= "{$seconds}S";
+            }
+        }
+
+        return $time
+            ->add(new \DateInterval($duration))
+            ->format('Y-m-d H:i:s');
+    }
+
+    /**
      * Get all the months of the year by name
      * @return array
      */
