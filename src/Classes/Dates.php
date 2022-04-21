@@ -228,7 +228,7 @@ final class Dates {
      * @return string
      * @throws \Exception
      */
-    public function addDurationToTime($startDate, $timezone='Africa/Nairobi', $years=null, $months=null, $weeks=null,$days=null, $hours=null,$minutes=null,$seconds=null) {
+    public static function addDurationToTime($startDate, $timezone='Africa/Nairobi', $years=null, $months=null, $weeks=null,$days=null, $hours=null,$minutes=null,$seconds=null) {
 
         $time = new DateTime($startDate);
         $time->setTimezone(new \DateTimeZone($timezone));
