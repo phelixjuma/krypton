@@ -217,7 +217,6 @@ final class Dates {
      * S is the second designator that follows the value for the number of seconds.
      *
      * @param $startDate
-     * @param string $timezone
      * @param null $years
      * @param null $months
      * @param null $weeks
@@ -228,10 +227,9 @@ final class Dates {
      * @return string
      * @throws \Exception
      */
-    public static function addDurationToTime($startDate, $timezone='Africa/Nairobi', $years=null, $months=null, $weeks=null,$days=null, $hours=null,$minutes=null,$seconds=null) {
+    public static function addDurationToTime($startDate, $years=null, $months=null, $weeks=null,$days=null, $hours=null,$minutes=null,$seconds=null) {
 
         $time = new DateTime($startDate);
-        $time->setTimezone(new \DateTimeZone($timezone));
 
         $duration = "P";
         if (!empty($years)) {

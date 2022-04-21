@@ -81,6 +81,8 @@ final class App {
     private $logs_directory = "Logs";
     private $routes_file = "routes";
 
+    private $timezone;
+
     private $document_root;
 
     public $log_access = 0;
@@ -89,13 +91,18 @@ final class App {
     /**
      * Initialize the system
      *
-     * @param string $document_root
+     * @param null $document_root
      * @param null $memory_limit
      * @param null $upload_max_filesize
      * @param null $post_max_size
-     * @throws Exceptions\ConfigurationException
+     * @param null $timezone
+     * @throws \Exception
      */
-    public function init($document_root = "", $memory_limit=null, $upload_max_filesize=null, $post_max_size=null) {
+    public function init($document_root = null, $memory_limit=null, $upload_max_filesize=null, $post_max_size=null, $timezone=null) {
+
+        // we set the default timezone
+        $d_timezone = $timezone ?? "Africa/Nairobi";
+        date_default_timezone_set($d_timezone);
 
         $this->document_root = !empty($document_root) ? $document_root : getcwd();
 
