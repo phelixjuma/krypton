@@ -142,6 +142,9 @@ class Response
      * @param $data
      */
     private function toExcel($data) {
+
+        array_unshift($data,array_keys($data[0]));
+
         SimpleXLSXGen::fromArray( $data )->downloadAs($this->request->module.'.xlsx');
     }
 
