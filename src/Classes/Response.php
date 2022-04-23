@@ -10,6 +10,7 @@
 namespace Kuza\Krypton\Classes;
 
 use Kuza\Krypton\Exceptions\CustomException;
+use Shuchkin\SimpleXLSXGen;
 
 class Response
 {
@@ -130,9 +131,18 @@ class Response
      */
     public function download($data) {
         // download response
-        Data::download_csv_file($data, $this->request->module . '.csv');
+        //Data::download_csv_file($data, $this->request->module . '.csv');
+
+        $this->toExcel($data);
 
         exit(0);
+    }
+
+    /**
+     * @param $data
+     */
+    private function toExcel($data) {
+        SimpleXLSXGen::fromArray( $data )->downloadAs($this->request->module.'.xlsx');
     }
 
     /**
