@@ -57,6 +57,10 @@ class Controller {
         $this->requests = new Requests();
         $this->response = new Response($this->requests);
 
+        if ($this->requests->backtrace == 1) {
+            ini_set("display_errors",1);
+        }
+
         // set current user
         $this->currentUser = RoutesHelper::request()->user;
     }
@@ -73,7 +77,7 @@ class Controller {
      */
     public function apiResponse(int $code = Requests::RESPONSE_OK, bool $success = true, string $message = "", $data = [], $errors = [], int $totalRecords = 0) {
 
-        $this->app->benchmark->stop();
+//        $this->app->benchmark->stop();
 
         $this->jsonResponse->code = $code;
         $this->jsonResponse->success = $success;

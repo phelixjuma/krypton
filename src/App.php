@@ -117,8 +117,8 @@ final class App {
 
 
         // we start the benchmark
-        $this->benchmark = new Benchmark();
-        $this->benchmark->start();
+//        $this->benchmark = new Benchmark();
+//        $this->benchmark->start();
 
         // load the environment file
         try {
@@ -154,14 +154,14 @@ final class App {
 
         $this->DIContainer = $builder->build();
 
-        $this->requests = new Requests();
-
-        $this->response = new Response($this->requests);
-
-        // we show errors when in backtrace mode.
-        if ($this->requests->backtrace == 1) {
-            ini_set("display_errors",1);
-        }
+//        $this->requests = new Requests();
+//
+//        $this->response = new Response($this->requests);
+//
+//        // we show errors when in backtrace mode.
+//        if ($this->requests->backtrace == 1) {
+//            ini_set("display_errors",1);
+//        }
     }
 
     /**
@@ -376,7 +376,7 @@ final class App {
         extract($data);
         extract($errors);
 
-        $this->benchmark->stop();
+//        $this->benchmark->stop();
 
         // we require the layout file
         require $this->getLayout();

@@ -124,11 +124,12 @@ final class Requests {
 
         $this->uri = $this->getRequestUri();
 
-        $this->setURIParts()
+        $this
+//            ->setURIParts()
             ->setRequestHeaders()
-            ->setModule()
-            ->setIdentifier()
-            ->setOption()
+//            ->setModule()
+//            ->setIdentifier()
+//            ->setOption()
             ->setQueryParameters()
             ->setMethod()
             ->setBody()
