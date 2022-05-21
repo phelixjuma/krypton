@@ -117,8 +117,8 @@ final class App {
 
 
         // we start the benchmark
-//        $this->benchmark = new Benchmark();
-//        $this->benchmark->start();
+        $this->benchmark = new Benchmark();
+        $this->benchmark->start();
 
         // load the environment file
         try {
@@ -376,7 +376,7 @@ final class App {
         extract($data);
         extract($errors);
 
-//        $this->benchmark->stop();
+        $this->benchmark->stop();
 
         // we require the layout file
         require $this->getLayout();

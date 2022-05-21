@@ -77,7 +77,7 @@ class Controller {
      */
     public function apiResponse(int $code = Requests::RESPONSE_OK, bool $success = true, string $message = "", $data = [], $errors = [], int $totalRecords = 0) {
 
-//        $this->app->benchmark->stop();
+        $this->app->benchmark->stop();
 
         $this->jsonResponse->code = $code;
         $this->jsonResponse->success = $success;
