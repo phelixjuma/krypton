@@ -154,14 +154,14 @@ final class App {
 
         $this->DIContainer = $builder->build();
 
-//        $this->requests = new Requests();
-//
-//        $this->response = new Response($this->requests);
-//
-//        // we show errors when in backtrace mode.
-//        if ($this->requests->backtrace == 1) {
-//            ini_set("display_errors",1);
-//        }
+        $this->requests = new Requests();
+
+        $this->response = new Response($this->requests);
+
+        // we show errors when in backtrace mode.
+        if ($this->requests->backtrace == 1) {
+            ini_set("display_errors",1);
+        }
     }
 
     /**

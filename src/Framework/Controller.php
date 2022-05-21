@@ -54,8 +54,8 @@ class Controller {
         $this->app  = $app;
 
         $this->jsonResponse = new JsonResponse;
-        $this->requests = new Requests();
-        $this->response = new Response($this->requests);
+        $this->requests = $this->app->requests;
+        $this->response = $this->app->response;
 
         if ($this->requests->backtrace == 1) {
             ini_set("display_errors",1);
