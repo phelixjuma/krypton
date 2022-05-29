@@ -206,26 +206,18 @@ final class Data {
         // Check if starts with '+'
         $phoneNumber = preg_replace('/\s+/', '', str_replace("+", "", $phoneNumber));
 
-        // check if starts with 0.
-        if (substr($phoneNumber, 0, 1) == "0") {
-            //replace the zero with the country code
-            $phoneNumber = substr_replace($phoneNumber, '', 0, 1);
+        //check if the first 3 characters are the same as the country code.
+        if (substr($phoneNumber, 0, 3) == $countryCode) {
+            return $phoneNumber;
         }
 
-        return  $phoneNumber;
-
-//        //check if the first 3 characters are the same as the country code.
-//        if (substr($phoneNumber, 0, 3) == $countryCode) {
-//            return $phoneNumber;
-//        }
-//
-//        //check if the phone number starts with a 0.
-//        if (substr($phoneNumber, 0, 1) == "0") {
-//            //replace the zero with the country code
-//            return substr_replace($phoneNumber, $countryCode, 0, 1);
-//        }
-//        // prepend 254
-//        return $countryCode . $phoneNumber;
+        //check if the phone number starts with a 0.
+        if (substr($phoneNumber, 0, 1) == "0") {
+            //replace the zero with the country code
+            return substr_replace($phoneNumber, $countryCode, 0, 1);
+        }
+        // prepend 254
+        return $countryCode . $phoneNumber;
     }
 
     /**
