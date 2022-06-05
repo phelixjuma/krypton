@@ -647,7 +647,8 @@ abstract class DBHandler {
         $distinct_part = $distinct ? "DISTINCT" : "";
 
         $sql="SELECT $distinct_part $columns FROM $this->table_name $this->join WHERE $criteria $group_by $having $order_by $queryLimit ";
-        $count_sql="SELECT $columns FROM $this->table_name $this->join WHERE $criteria $group_by $having";
+
+        $count_sql="SELECT {$this->countColumn($this->prkey,$this->prkey)} FROM $this->table_name $this->join WHERE $criteria $group_by $having";
 
        // print $sql."\n";
 
@@ -663,8 +664,9 @@ abstract class DBHandler {
             // count the records
             $count_statement=$this->createStatement($count_sql,$params,$values);
             $count_statement->execute();
-            //$result = $count_statement->fetchAll(\PDO::FETCH_ASSOC);
-            $this->total_records = $count_statement->rowCount();
+            $count_result = $count_statement->fetchAll(\PDO::FETCH_ASSOC);
+            $this->total_records = ($count_result && count($count_result)>0 && (int)$count_result[0][$this->prkey]>0)? (int)$count_result[0][$this->prkey] : 0;
+            //$this->total_records = $count_statement->rowCount();
 
         } catch(\Exception $e) {
             $this->is_error = true;
