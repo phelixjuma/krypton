@@ -115,7 +115,7 @@ class S3 {
             $options = array(
                 'Bucket'        => $this->bucket,
                 'ContentType'   => $mime_type,
-                'Key'           => $destination_directory."/".$destination_file_name,
+                'Key'           => !empty($destination_directory) ? $destination_directory."/".$destination_file_name : $destination_file_name,
                 'SourceFile'    => $source_file,
                 'CacheControl'  => 'max-age=172800',
                 "Expires"       => gmdate("D, d M Y H:i:s T", strtotime("+5 years"))
@@ -150,7 +150,7 @@ class S3 {
             $options = array(
                 'Bucket'        => $this->bucket,
                 'ContentType'   => $mime_type,
-                'Key'           => $destination_directory."/".$destination_file_name,
+                'Key'           => !empty($destination_directory) ? $destination_directory."/".$destination_file_name : $destination_file_name,
                 'Body'    => $source_file,
                 'CacheControl'  => 'max-age=172800',
                 "Expires"       => gmdate("D, d M Y H:i:s T", strtotime("+5 years"))

@@ -360,7 +360,8 @@ class Files {
                 $fileInfo['type'] = $fileType;
 
                 // we upload the file to S3
-                $destination_directory = date("Y/m/d", time());
+                //$destination_directory = date("Y/m/d", time());
+                $destination_directory = "";
                 $destination_file_name = $fileInfo['name'] . "." . $fileInfo['extension'];
 
                 $fileInfo['file_uri_path'] = $destination_directory;
