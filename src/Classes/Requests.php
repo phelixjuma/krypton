@@ -520,7 +520,7 @@ final class Requests {
      * @return array
      * @throws HttpException
      */
-    public static function sendCurlRequest($endpoint, $headers, $type, $body = array()) {
+    public static function sendCurlRequest($endpoint, $headers, $type, $body = array(), $isJson=true) {
 
         try {
             $ch = curl_init();
@@ -528,7 +528,11 @@ final class Requests {
             curl_setopt($ch, CURLOPT_POST, false);
             if ($type == 'post') {
                 curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+                if ($isJson) {
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+                } else {
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($body));
+                }
             }
             curl_setopt($ch, CURLOPT_URL, $endpoint);
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
