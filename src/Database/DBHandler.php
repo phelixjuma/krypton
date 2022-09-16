@@ -436,8 +436,6 @@ abstract class DBHandler {
             array_push($dataToInsert, ...array_values($d));
         }
 
-        print_r($dataToInsert);
-
         // setup the placeholders - a fancy way to make the long "(?, ?, ?)..." string
         $rowPlaces = '(' . implode(', ', array_fill(0, count($colNames), '?')) . ')';
         $allPlaces = implode(', ', array_fill(0, count($data), $rowPlaces));
@@ -445,12 +443,9 @@ abstract class DBHandler {
         $sql = "INSERT INTO `$this->table_name` (" . implode(', ', $colNames) .
             ") VALUES " . $allPlaces;
 
-        print $sql;
-
         // and then the PHP PDO boilerplate
         $statement = $this->adapter()->prepare($sql);
 
-        //$statement->execute($dataToInsert);
         return $this->executeStatement($statement, $dataToInsert);
     }
 
