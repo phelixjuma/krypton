@@ -434,6 +434,8 @@ abstract class DBHandler {
 
         array_push($dataToInsert, ...array_values($data));
 
+        print_r($dataToInsert);
+
         // setup the placeholders - a fancy way to make the long "(?, ?, ?)..." string
         $rowPlaces = '(' . implode(', ', array_fill(0, count($colNames), '?')) . ')';
         $allPlaces = implode(', ', array_fill(0, count($data), $rowPlaces));
