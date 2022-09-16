@@ -402,9 +402,7 @@ abstract class DBHandler {
             $this->recordsAffected=0;
             $this->lastAffectedId=null;
             $this->is_error=true;
-            $this->message= $statement->errorInfo()[2];
-
-            print_r($statement->errorInfo());
+            $this->message = "{$statement->errorInfo()[0]} {$statement->errorInfo()[1]} {$statement->errorInfo()[2]}";
         }
         return $this->recordsAffected;
     }
