@@ -424,6 +424,31 @@ abstract class DBHandler {
     }
 
     /**
+     * @param array $data
+     * @return int
+     */
+    public function insertMulti(array $data) {
+
+        $colNames = array_keys($data[0]);
+        $dataToInsert = array();
+
+        array_push($dataToInsert, ...array_values($data));
+
+        // setup the placeholders - a fancy way to make the long "(?, ?, ?)..." string
+        $rowPlaces = '(' . implode(', ', array_fill(0, count($colNames), '?')) . ')';
+        $allPlaces = implode(', ', array_fill(0, count($data), $rowPlaces));
+
+        $sql = "INSERT INTO `$this->table_name` (" . implode(', ', $colNames) .
+            ") VALUES " . $allPlaces;
+
+        // and then the PHP PDO boilerplate
+        $statement = $this->adapter()->prepare($sql);
+
+        //$statement->execute($dataToInsert);
+        return $this->executeStatement($statement);
+    }
+
+    /**
      * Handle DELETE SQL statement
      * @param $criteria
      * @param $named_tables
