@@ -391,9 +391,9 @@ abstract class DBHandler {
      * @param \PDOStatement $statement
      * @return int
      */
-    protected function executeStatement(\PDOStatement $statement) {
+    protected function executeStatement(\PDOStatement $statement, $params=null) {
         try {
-            $this->success=(int)$statement->execute();
+            $this->success=(int)$statement->execute($params);
             $this->recordsAffected=(int)$statement->rowCount();
             $this->lastAffectedId = $this->adapter()->lastInsertId();
             $this->is_error=false;
@@ -447,7 +447,7 @@ abstract class DBHandler {
         $statement = $this->adapter()->prepare($sql);
 
         //$statement->execute($dataToInsert);
-        return $this->executeStatement($statement);
+        return $this->executeStatement($statement, $dataToInsert);
     }
 
     /**
