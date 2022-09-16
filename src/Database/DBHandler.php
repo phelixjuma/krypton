@@ -432,7 +432,9 @@ abstract class DBHandler {
         $colNames = array_keys($data[0]);
         $dataToInsert = array();
 
-        array_push($dataToInsert, ...array_values($data));
+        foreach($data as $d){
+            array_push($dataToInsert, ...array_values($d));
+        }
 
         print_r($dataToInsert);
 
