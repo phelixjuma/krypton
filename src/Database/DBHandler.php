@@ -441,6 +441,8 @@ abstract class DBHandler {
         $sql = "INSERT INTO `$this->table_name` (" . implode(', ', $colNames) .
             ") VALUES " . $allPlaces;
 
+        print $sql;
+
         // and then the PHP PDO boilerplate
         $statement = $this->adapter()->prepare($sql);
 
