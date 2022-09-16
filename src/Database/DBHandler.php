@@ -403,6 +403,8 @@ abstract class DBHandler {
             $this->lastAffectedId=null;
             $this->is_error=true;
             $this->message= $statement->errorInfo()[2];
+
+            print_r($statement->errorInfo());
         }
         return $this->recordsAffected;
     }
