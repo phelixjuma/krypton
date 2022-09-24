@@ -79,8 +79,8 @@ final class Requests {
     public $option = "";
     public $filters = "";
     public $page = 1;
-    public $offset = 0; //default offset is 0
-    public $limit = 50; //default limit is 50
+    public $offset = null;
+    public $limit = null;
     public $search = "";
     public $download = false;
     public $sort = "desc";
@@ -292,8 +292,8 @@ final class Requests {
             }
         }
 
-        $this->offset = isset($filters['offset']) ? $filters['offset'] : 0;
-        $this->limit = isset($filters['limit']) ? $filters['limit'] : Config::PAGE_SIZE;
+        $this->offset = $filters['offset'] ?? null;
+        $this->limit = $filters['limit'] ?? null;
         $this->search = isset($filters['search']) ? $filters['search'] : "";
         $this->sort = isset($filters['sort']) ? $filters['sort'] : "desc";
         $this->isBenchmark = isset($filters['benchmark']) && $filters['benchmark'] == 1 ? true : false;
