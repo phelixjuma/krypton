@@ -292,13 +292,18 @@ final class Requests {
             }
         }
 
-        $this->offset = $filters['offset'] ?? 0;
-        $this->limit = $filters['limit'] ?? null;
         $this->search = isset($filters['search']) ? $filters['search'] : "";
         $this->sort = isset($filters['sort']) ? $filters['sort'] : "desc";
         $this->isBenchmark = isset($filters['benchmark']) && $filters['benchmark'] == 1 ? true : false;
         $this->backtrace = isset($filters['backtrace']) ? $filters['backtrace'] : 0;
         $this->download = isset($filters['download']) && $filters['download'] == 1 ? true : false;
+
+        $this->offset = $filters['offset'] ?? 0;
+        if (!empty($filters['limit'])) {
+            $this->limit = $filters['limit'];
+        } else {
+            $this->limit = $this->download === false ? 15 : null;
+        }
 
         //unset the offset and limit from the filters
         unset($filters['offset']);
