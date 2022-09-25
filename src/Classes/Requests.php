@@ -292,7 +292,7 @@ final class Requests {
             }
         }
 
-        $this->offset = $filters['offset'] ?? null;
+        $this->offset = $filters['offset'] ?? 0;
         $this->limit = $filters['limit'] ?? null;
         $this->search = isset($filters['search']) ? $filters['search'] : "";
         $this->sort = isset($filters['sort']) ? $filters['sort'] : "desc";
