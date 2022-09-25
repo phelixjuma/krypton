@@ -79,7 +79,7 @@ final class Requests {
     public $option = "";
     public $filters = "";
     public $page = 1;
-    public $offset = null;
+    public $offset = 0;
     public $limit = null;
     public $search = "";
     public $download = false;
