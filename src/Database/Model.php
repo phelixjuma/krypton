@@ -119,7 +119,7 @@ class Model extends DBHandler {
         }
 
         if (!is_null($alias)) {
-            $this->prepareCriteriaAlias($cr, $alias);
+            $this->prepareCriteriaAlias($criteria, $alias);
         }
         return $this;
     }
