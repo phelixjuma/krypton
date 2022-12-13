@@ -179,7 +179,7 @@ class Model extends DBHandler {
         }
 
         // handle exclusions.
-        if (sizeof($exclude) > 0) {
+        if (strlen($exclude) > 0) {
             $split = explode(" ", preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $exclude));
             $words = [];
             foreach($split as $word) {
