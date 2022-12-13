@@ -187,7 +187,7 @@ class Model extends DBHandler {
                     $words[] = '-'. $word;
             }
             $imploded = implode(" ", $words);
-            $keyword =  $imploded;
+            $keyword .=  " ".$imploded;
         }
     }
 }
