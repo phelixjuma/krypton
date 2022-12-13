@@ -97,7 +97,8 @@ class Controller {
 
         //Send response
         if ($this->requests->download == true) {
-            $this->response->status_code($code)->download($data);
+            $fileType = $this->requests->download_file_type ?? 'excel';
+            $this->response->status_code($code)->download($data, $fileType);
         } else {
             $this->response->status_code($code)->json($this->jsonResponse->toArray());
         }

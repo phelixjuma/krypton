@@ -129,12 +129,13 @@ class Response
      * Download response
      * @param $data
      */
-    public function download($data) {
-        // download response
-        //Data::download_csv_file($data, $this->request->module . '.csv');
+    public function download($data, $type='excel') {
 
-        $this->toExcel($data);
-
+        if ($type == 'csv') {
+            Data::download_csv_file($data, $this->request->module . '.csv');
+        } else {
+            $this->toExcel($data);
+        }
         exit(0);
     }
 
