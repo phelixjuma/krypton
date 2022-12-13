@@ -152,17 +152,18 @@ class Model extends DBHandler {
     }
 
     /**
-     * Prepare the search string to fully match the mysql FULLTEXT search
      * @param $keyword
-     * @param bool $startsWith
+     * @param bool $partialWord
+     * @param false $fullPhrase
+     * @param string $exclude
      */
-    public function prepareFullTextSearchKeyWord(&$keyword, $startsWith=true) {
+    public function prepareFullTextSearchKeyWord(&$keyword, $partialWord=true, $fullPhrase=false, $exclude="") {
         // Replace all non word characters with spaces
         $sane = preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $keyword);
 
         // 'apple*'
         // Find rows that contain words such as “apple”, “apples”, “applesauce”, or “applet”.
-        if($startsWith) {
+        if($partialWord) {
             $split = explode(" ", $sane);
             $words = [];
             foreach($split as $word) {
@@ -171,8 +172,22 @@ class Model extends DBHandler {
             }
             $imploded = implode(" ", $words);
             $keyword =  $imploded;
+        } elseif($fullPhrase) {
+            $keyword = '"'.$sane.'"';
         } else {
             $keyword = $sane;
+        }
+
+        // handle exclusions.
+        if (sizeof($exclude) > 0) {
+            $split = explode(" ", preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $exclude));
+            $words = [];
+            foreach($split as $word) {
+                if(strlen($word) > 0)
+                    $words[] = '-'. $word;
+            }
+            $imploded = implode(" ", $words);
+            $keyword =  $imploded;
         }
     }
 }
