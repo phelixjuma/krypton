@@ -4,10 +4,15 @@ namespace Kuza\Krypton\Database;
 
 use Kuza\Krypton\Classes\Data;
 use Kuza\Krypton\Classes\Dates;
+use Kuza\Krypton\Classes\Utils;
 use Kuza\Krypton\Database\Predicates\Between;
 use Kuza\Krypton\Framework\RoutesHelper;
+use Ramsey\Uuid\Uuid;
 
 class Model extends DBHandler {
+
+
+    protected $uuid;
 
 
     /**
@@ -22,10 +27,12 @@ class Model extends DBHandler {
     }
 
     /**
-     * Prepare insert data
      * @param $data
+     * @param $useUUID
+     * @return $this
      */
-    public function prepareInsertData(&$data) {
+    public function prepareInsertData(&$data, $useUUID=false) {
+
         global $app;
 
         $createdAt = Dates::getTimestamp();
@@ -44,12 +51,22 @@ class Model extends DBHandler {
         if((!isset($data['created_by']) || empty($data['created_by'])) && Data::arrayValueExists("created_by",$this->getColumns())) {
             $data['created_by'] = isset(RoutesHelper::request()->user) ? RoutesHelper::request()->user->id : 0;
         }
+
+        if ($useUUID) {
+
+            $this->uuid = Uuid::uuid4()->toString();
+
+            $data['uuid'] = $this->uuid;
+        }
+
         $data = parent::sanitize($data,false);
+
+        return $this;
     }
 
     /**
-     * Prepare an update data
      * @param $data
+     * @return $this
      */
     public function prepareUpdateData(&$data) {
 
@@ -61,11 +78,12 @@ class Model extends DBHandler {
         }
         $data = parent::sanitize($data,false);
 
+        return $this;
     }
 
     /**
-     * Prepare delete data
      * @param $data
+     * @return $this
      */
     public function prepareDeleteData(&$data) {
 
@@ -81,6 +99,8 @@ class Model extends DBHandler {
         }
 
         $data = parent::sanitize($data,false);
+
+        return $this;
     }
 
     /**
