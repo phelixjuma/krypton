@@ -243,7 +243,8 @@ class Files {
 
     /**
      * Check whether the provided file is valid or not
-     * @param string $file
+     *
+     * @param $file
      * @return array
      */
     public function isValidFile($file) {
@@ -260,12 +261,8 @@ class Files {
                         $response['error'] = 0;
                         $response['data'] = null;
                         break;
-                    case 1:
-                        $response['message'] = "File exceeds allowed size";
-                        $response['error'] = 1;
-                        $response['data'] = null;
-                        break;
                     case 2:
+                    case 1:
                         $response['message'] = "File exceeds allowed size";
                         $response['error'] = 1;
                         $response['data'] = null;
@@ -290,7 +287,7 @@ class Files {
                         $response['error'] = 1;
                         $response['data'] = null;
                         break;
-                    case 7:
+                    case 8:
                         $response['message'] = "File upload stopped by extension. Please contact server admin for help";
                         $response['error'] = 1;
                         $response['data'] = null;
@@ -326,58 +323,58 @@ class Files {
         $response['message'] = "";
         $response['data'] = null;
 
-        $response = $this->isValidFile($file);
+        //$response = $this->isValidFile($file);
 
-        if($response['error'] == 0) {
-            //we check for the specific file type validity
+        //if($response['error'] == 0) {
+        //we check for the specific file type validity
 
-            $fileType = false;
-            if (in_array($fileInfo['extension'], array_keys($this->images_mime_types))) {
-                $fileType = "image";
-            } elseif(in_array($fileInfo['extension'], array_keys($this->pdf_mime_types))) {
-                $fileType = "document";
-            } elseif(in_array($fileInfo['extension'], array_keys($this->word_mime_types))) {
-                $fileType = "document";
-            } elseif(in_array($fileInfo['extension'], array_keys($this->video_mime_types))) {
-                $fileType = "video";
-            }
-
-            if ($fileType == false) {
-                $response['error'] = 1;
-                $response['message'] = "You have selected an unaccepted file format";
-            } else {
-
-                $fileInfo['type'] = $fileType;
-
-                // we upload the file to S3
-                $destination_file_name = $fileInfo['name'] . "." . $fileInfo['extension'];
-
-                $fileInfo['file_uri_path'] = $destination_directory;
-
-                $isUploaded = false;
-
-                try {
-
-                    $isUploaded = $this
-                        ->S3
-                        ->init($this->s3Version, $this->s3Region, $this->s3AccessKey, $this->s3AccesSecret)
-                        ->setBucket($this->s3bucketName)
-                        ->uploadFile($file['tmp_name'],$destination_directory,$destination_file_name,$fileInfo['mime_type']);
-
-                } catch (\Exception $e) {
-                    print $e->getMessage();
-                }
-
-                if (!$isUploaded) {
-                    $response['message'] = "Failed to upload the file to S3";
-                } else {
-                    $response['error'] = 0;
-                    $response['message'] = 'File successfully uploaded';
-                }
-
-                $response['data'] = $fileInfo;
-            }
+        $fileType = false;
+        if (in_array($fileInfo['extension'], array_keys($this->images_mime_types))) {
+            $fileType = "image";
+        } elseif(in_array($fileInfo['extension'], array_keys($this->pdf_mime_types))) {
+            $fileType = "document";
+        } elseif(in_array($fileInfo['extension'], array_keys($this->word_mime_types))) {
+            $fileType = "document";
+        } elseif(in_array($fileInfo['extension'], array_keys($this->video_mime_types))) {
+            $fileType = "video";
         }
+
+        if (!$fileType) {
+            $response['error'] = 1;
+            $response['message'] = "You have selected an unaccepted file format";
+        } else {
+
+            $fileInfo['type'] = $fileType;
+
+            // we upload the file to S3
+            $destination_file_name = $fileInfo['name'] . "." . $fileInfo['extension'];
+
+            $fileInfo['file_uri_path'] = $destination_directory;
+
+            $isUploaded = false;
+
+            try {
+
+                $isUploaded = $this
+                    ->S3
+                    ->init($this->s3Version, $this->s3Region, $this->s3AccessKey, $this->s3AccesSecret)
+                    ->setBucket($this->s3bucketName)
+                    ->uploadFile($file['tmp_name'],$destination_directory,$destination_file_name,$fileInfo['mime_type']);
+
+            } catch (\Exception $e) {
+                print $e->getMessage();
+            }
+
+            if (!$isUploaded) {
+                $response['message'] = "Failed to upload the file to S3";
+            } else {
+                $response['error'] = 0;
+                $response['message'] = 'File successfully uploaded';
+            }
+
+            $response['data'] = $fileInfo;
+        }
+        //}
         return $response;
     }
 
