@@ -318,7 +318,7 @@ class Files {
      * @param string $destination_directory
      * @return array
      */
-    public function uploadFile($type, $file, $destination_directory="") {
+    public function uploadFile($file, $destination_directory="") {
 
         $fileInfo = $this->getFileInfo($file);
 
@@ -332,26 +332,14 @@ class Files {
             //we check for the specific file type validity
 
             $fileType = false;
-
-            switch ($type) {
-                case 'image':
-                    $fileType = $this->isImage($fileInfo);
-                    break;
-                case 'video':
-                    $fileType = $this->isVideo($fileInfo);
-                    break;
-                case 'document':
-
-                    if ($this->isPDF($fileInfo) !== false) {
-                        $fileType = "PDF";
-                    } elseif ($this->isWord($fileInfo) !== false) {
-                        $fileType = "word";
-                    } else if ($this->isZip($fileInfo) !== false) {
-                        $fileType = "zip";
-                    } else {
-                        $fileType = false;
-                    }
-                    break;
+            if (in_array($fileInfo['extension'], array_keys($this->images_mime_types))) {
+                $fileType = "image";
+            } elseif(in_array($fileInfo['extension'], array_keys($this->pdf_mime_types))) {
+                $fileType = "document";
+            } elseif(in_array($fileInfo['extension'], array_keys($this->word_mime_types))) {
+                $fileType = "document";
+            } elseif(in_array($fileInfo['extension'], array_keys($this->video_mime_types))) {
+                $fileType = "video";
             }
 
             if ($fileType == false) {
