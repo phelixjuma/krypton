@@ -14,6 +14,9 @@ use DI\Container;
 use Dotenv\Dotenv;
 use Kuza\Krypton\Classes\Response;
 use Kuza\Krypton\Config\Config;
+use Pecee\Http\Middleware\Exceptions\TokenMismatchException;
+use Pecee\SimpleRouter\Exceptions\HttpException;
+use Pecee\SimpleRouter\Exceptions\NotFoundHttpException;
 use Pecee\SimpleRouter\SimpleRouter;
 
 use Kuza\Krypton\Classes\Benchmark;
@@ -83,7 +86,8 @@ final class App {
 
     private $timezone;
 
-    private $document_root;
+    private $app_root;
+    private $app_public_directory;
 
     public $log_access = 0;
     public $access_log_handler = [];
@@ -91,20 +95,20 @@ final class App {
     /**
      * Initialize the system
      *
-     * @param null $document_root
+     * @param null $app_root
      * @param null $memory_limit
      * @param null $upload_max_filesize
      * @param null $post_max_size
      * @param null $timezone
      * @throws \Exception
      */
-    public function init($document_root = null, $memory_limit=null, $upload_max_filesize=null, $post_max_size=null, $timezone=null) {
+    public function init($app_root = null, $memory_limit=null, $upload_max_filesize=null, $post_max_size=null, $timezone=null) {
 
         // we set the default timezone
         $d_timezone = $timezone ?? "Africa/Nairobi";
         date_default_timezone_set($d_timezone);
 
-        $this->document_root = !empty($document_root) ? $document_root : getcwd();
+        $this->app_root = !empty($app_root) ? $app_root : getcwd();
 
         //set spl autoload
         spl_autoload_register([$this, 'loadClass']);
@@ -115,14 +119,13 @@ final class App {
         // set error handler
         set_error_handler([$this, "handleErrors"]);
 
-
         // we start the benchmark
         $this->benchmark = new Benchmark();
         $this->benchmark->start();
 
         // load the environment file
         try {
-            $dotenv = Dotenv::createImmutable($this->document_root);
+            $dotenv = Dotenv::createImmutable($this->app_root);
             $dotenv->load();
         } catch (\Exception $e) {
             //print_r($e->getMessage());
@@ -140,7 +143,7 @@ final class App {
         ini_set("html_errors", 1);
         ini_set("display_startup_errors", 0);
         ini_set("log_errors", 1);
-        ini_set("error_log", $this->logs_directory . "/" .date("Y-m-d", time()). "-errors.log");
+        ini_set("error_log", $this->getLogsDirectory() . "/" .date("Y-m-d", time()). "-errors.log");
         ini_set("ignore_repeated_errors", 1);
         ini_set('memory_limit', $memory_limit ?? '1024M');
         ini_set('upload_max_filesize', $upload_max_filesize ?? '1024M');
@@ -237,11 +240,19 @@ final class App {
     }
 
     /**
+     * @return string
+     */
+    private function getLogsDirectory() {
+        return $this->app_root . DIRECTORY_SEPARATOR . $this->logs_directory;
+    }
+
+    /**
      * Set routes file
      * @param $file
      * @return $this
      */
     public function setRoutesFile($file) {
+
         $this->routes_file = $file;
 
         return $this;
@@ -267,11 +278,11 @@ final class App {
     }
 
     /**
-     * Run the application!
-     * @param null $cors
-     * @throws \Pecee\Http\Middleware\Exceptions\TokenMismatchException
-     * @throws \Pecee\SimpleRouter\Exceptions\HttpException
-     * @throws \Pecee\SimpleRouter\Exceptions\NotFoundHttpException
+     * @param $cors
+     * @return void
+     * @throws TokenMismatchException
+     * @throws HttpException
+     * @throws NotFoundHttpException
      */
     public function run($cors = null) {
 
@@ -312,7 +323,7 @@ final class App {
         }
 
         //we replace the backslash in the namespace with the directory seperator and add the class extension
-        $classFile = $this->document_root .$directorySeperator. str_ireplace("\\",$directorySeperator, $namespace).".php";
+        $classFile = $this->app_root .$directorySeperator. str_ireplace("\\",$directorySeperator, $namespace).".php";
 
         if(is_file($classFile)){
             require_once  $classFile;
@@ -341,7 +352,7 @@ final class App {
      * @return string
      */
     private function getRouteDefinitions() {
-        return $this->routes_file . ".php";
+        return $this->app_root . DIRECTORY_SEPARATOR . $this->routes_file . ".php";
     }
 
     /**
@@ -349,7 +360,7 @@ final class App {
      * @return string
      */
     public function getLayout() {
-        return $this->layouts_directory . "/layout.php";
+        return $this->app_root . DIRECTORY_SEPARATOR . $this->layouts_directory .DIRECTORY_SEPARATOR . "layout.php";
     }
 
     /**
@@ -358,7 +369,7 @@ final class App {
      * @return string
      */
     private function getViewTemplate($page) {
-        return $this->views_directory ."/". $page . '.phtml';
+        return $this->app_root . DIRECTORY_SEPARATOR . $this->views_directory . DIRECTORY_SEPARATOR . $page . '.phtml';
     }
 
     /**
