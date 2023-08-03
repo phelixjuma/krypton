@@ -658,9 +658,13 @@ final class Data {
      */
     public static function mapArrayToObject(&$object, array $array) {
 
+        $reflectionClass = new \ReflectionClass(get_class($object));
+
         foreach ($array as $key => $value) {
-            if (property_exists($object, $key)) {
-                $object->$key = $value;
+            if ($reflectionClass->hasProperty($key)) {
+                $property = $reflectionClass->getProperty($key);
+                $property->setAccessible(true);
+                $property->setValue($object, $value);
             }
         }
     }
