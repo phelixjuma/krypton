@@ -124,6 +124,15 @@ final class App {
         //set spl autoload
         spl_autoload_register([$this, 'loadClass']);
 
+        //set the php-di container
+        $builder = new \DI\ContainerBuilder();
+        //$builder->useAnnotations(true);
+
+        $this->DIContainer = $builder->build();
+
+        // Load listeners (or other services) via annotations and register them
+        $this->registerListenersFromAnnotations();
+
         //set exception handler
         set_exception_handler([$this, 'handleException']);
 
@@ -161,15 +170,6 @@ final class App {
         ini_set('post_max_size', $post_max_size ?? '1024M');
 
         mb_internal_encoding('UTF-8');
-
-        //set the php-di container
-        $builder = new \DI\ContainerBuilder();
-        //$builder->useAnnotations(true);
-
-        $this->DIContainer = $builder->build();
-
-        // Events
-        $this->loadEvents();
 
         $this->requests = new Requests();
 
@@ -346,7 +346,7 @@ final class App {
         }
     }
 
-    private function loadEvents() {
+    private function registerListenersFromAnnotations() {
 
         $annotationReader = new AnnotationReader();
         $provider = new Provider();
@@ -369,7 +369,8 @@ final class App {
                 print "reflection method: $method->name\n";
                 if ($annotation = $annotationReader->getMethodAnnotation($method, EventListener::class)) {
 
-                    $listenerInstance = new $listenerClass();
+                    // Use the DI container to resolve the instance and its dependencies
+                    $listenerInstance = $this->DIContainer->get($listenerClass);
 
                     print "listener instance\n";
 
