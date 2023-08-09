@@ -124,15 +124,6 @@ final class App {
         //set spl autoload
         spl_autoload_register([$this, 'loadClass']);
 
-        //set the php-di container
-        $builder = new \DI\ContainerBuilder();
-        //$builder->useAnnotations(true);
-
-        $this->DIContainer = $builder->build();
-
-        // Load listeners (or other services) via annotations and register them
-        $this->registerListenersFromAnnotations();
-
         //set exception handler
         set_exception_handler([$this, 'handleException']);
 
@@ -150,6 +141,15 @@ final class App {
         } catch (\Exception $e) {
             //print_r($e->getMessage());
         }
+
+        //set the php-di container
+        $builder = new \DI\ContainerBuilder();
+        //$builder->useAnnotations(true);
+
+        $this->DIContainer = $builder->build();
+
+        // Load listeners (or other services) via annotations and register them
+        $this->registerListenersFromAnnotations();
 
         try {
             $displayErrors = Config::getSpecificConfig("DISPLAY_ERRORS");
@@ -367,19 +367,28 @@ final class App {
 
             foreach ($reflectionClass->getMethods() as $method) {
                 print "reflection method: $method->name\n";
-                if ($annotation = $annotationReader->getMethodAnnotation($method, EventListener::class)) {
 
-                    // Use the DI container to resolve the instance and its dependencies
-                    $listenerInstance = $this->DIContainer->get($listenerClass);
+                try {
+                    $annotation = $annotationReader->getMethodAnnotation($method, EventListener::class);
 
-                    print "listener instance\n";
+                    if ($annotation) {
 
-                    $callable = [$listenerInstance, $method->getName()];
+                        // Use the DI container to resolve the instance and its dependencies
+                        $listenerInstance = $this->DIContainer->get($listenerClass);
 
-                    print "callable {$method->getName()}\n";
+                        print "listener instance\n";
 
-                    $priority = $annotation->priority ?? 50; // Default to 50 if not set in annotation
-                    $provider->attach($callable, $priority);
+                        $callable = [$listenerInstance, $method->getName()];
+
+                        print "callable {$method->getName()}\n";
+
+                        $priority = $annotation->priority ?? 50; // Default to 50 if not set in annotation
+                        $provider->attach($callable, $priority);
+
+                    }
+
+                } catch (\Exception $e) {
+                    print $e->getMessage();
                 }
             }
         }
