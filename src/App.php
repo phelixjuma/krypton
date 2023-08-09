@@ -364,6 +364,10 @@ final class App {
         }
     }
 
+    /**
+     * @return void
+     * @throws \ReflectionException
+     */
     private function registerListenersFromAnnotations() {
 
         $annotationReader = new AnnotationReader();
@@ -408,7 +412,7 @@ final class App {
     /**
      * @return Dispatcher
      */
-    public static function eventsDispatcher(): Dispatcher
+    public static function events(): Dispatcher
     {
         return self::getInstance()->eventsDispatcher;
     }
