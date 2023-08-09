@@ -11,7 +11,7 @@ namespace Kuza\Krypton\Framework;
 
 /**
  * @Annotation
- * @Target("CLASS")
+ * @Target("METHOD")
  */
 final class EventListener {
     public $event;
