@@ -32,6 +32,8 @@ use Phoole\Event\Provider;
  */
 final class App {
 
+    private static $instance = null;
+
     /**
      * Holds all details of a received request.
      * @var Requests $requests
@@ -102,6 +104,22 @@ final class App {
 
     public $log_access = 0;
     public $access_log_handler = [];
+
+    // Ensure only one instance is created
+    private function __construct() {}
+
+    /**
+     * Static method to retrieve the instance
+     *
+     * @return App|null
+     */
+    public static function getInstance(): ?App
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
     /**
      * Initialize the system
@@ -361,12 +379,9 @@ final class App {
 
             $listenerClass = 'Kuza\Krypton\\Framework\\Events\\Listeners\\' . $file->getBasename('.php');
 
-            print "listener class = $listenerClass\n";
-
             $reflectionClass = new \ReflectionClass($listenerClass);
 
             foreach ($reflectionClass->getMethods() as $method) {
-                print "reflection method: $method->name\n";
 
                 try {
                     $annotation = $annotationReader->getMethodAnnotation($method, EventListener::class);
@@ -376,11 +391,7 @@ final class App {
                         // Use the DI container to resolve the instance and its dependencies
                         $listenerInstance = $this->DIContainer->get($listenerClass);
 
-                        print "listener instance\n";
-
                         $callable = [$listenerInstance, $method->getName()];
-
-                        print "callable {$method->getName()}\n";
 
                         $priority = $annotation->priority ?? 50; // Default to 50 if not set in annotation
                         $provider->attach($callable, $priority);
@@ -388,10 +399,18 @@ final class App {
                     }
 
                 } catch (\Exception $e) {
-                    print $e->getMessage();
+                    //print $e->getMessage();
                 }
             }
         }
+    }
+
+    /**
+     * @return Dispatcher
+     */
+    public static function eventsDispatcher(): Dispatcher
+    {
+        return self::getInstance()->eventsDispatcher;
     }
 
     /**
