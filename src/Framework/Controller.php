@@ -15,8 +15,6 @@ use Kuza\Krypton\Classes\Response;
 use Kuza\Krypton\Exceptions\CustomException;
 use Kuza\Krypton\App;
 use Rakit\Validation\Validator;
-use Pecee\Http\Url;
-use Pecee\Http\Request;
 
 class Controller {
 

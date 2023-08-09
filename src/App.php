@@ -11,6 +11,7 @@
 namespace Kuza\Krypton;
 
 use DI\Container;
+use Doctrine\Common\Annotations\AnnotationReader;
 use Dotenv\Dotenv;
 use Kuza\Krypton\Classes\Response;
 use Kuza\Krypton\Config\Config;
@@ -21,6 +22,9 @@ use Pecee\SimpleRouter\SimpleRouter;
 
 use Kuza\Krypton\Classes\Benchmark;
 use Kuza\Krypton\Classes\Requests;
+use Kuza\Krypton\Framework\EventListener;
+use Phoole\Event\Dispatcher;
+use Phoole\Event\Provider;
 
 
 /**
@@ -59,6 +63,11 @@ final class App {
     public $DIContainer;
 
     /**
+     * @var Dispatcher $eventsDispatcher
+     */
+    public $eventsDispatcher;
+
+    /**
      * @var Benchmark $benchmark the benchmark handler
      */
     public $benchmark;
@@ -80,6 +89,8 @@ final class App {
 
     private $controllers_directory = "Controllers";
     private $views_directory = "Views";
+    private $events_directory = "Events/Events";
+    private $event_listeners_directory = "Events/Listeners";
     private $layouts_directory = "Layouts";
     private $logs_directory = "Logs";
     private $routes_file = "routes";
@@ -156,6 +167,9 @@ final class App {
         //$builder->useAnnotations(true);
 
         $this->DIContainer = $builder->build();
+
+        // Events
+        $this->loadEvents();
 
         $this->requests = new Requests();
 
@@ -329,6 +343,34 @@ final class App {
             require_once  $classFile;
         } else {
             echo "file does not exist: ". $classFile;
+        }
+    }
+
+    private function loadEvents() {
+
+        $annotationReader = new AnnotationReader();
+        $provider = new Provider();
+
+        $this->eventsDispatcher = new Dispatcher($provider);
+
+        $listenerDir = $this->app_root . DIRECTORY_SEPARATOR . $this->event_listeners_directory .DIRECTORY_SEPARATOR;
+
+
+        foreach (new \DirectoryIterator($listenerDir) as $file) {
+            if ($file->isDot() || $file->getExtension() !== 'php') continue;
+
+            $listenerClass = 'Kuza\Krypton\\Framework\\Events\\Listeners\\' . $file->getBasename('.php');
+            $reflectionClass = new \ReflectionClass($listenerClass);
+
+            foreach ($reflectionClass->getMethods() as $method) {
+                if ($annotation = $annotationReader->getMethodAnnotation($method, EventListener::class)) {
+                    $listenerInstance = new $listenerClass();
+                    $callable = [$listenerInstance, $method->getName()];
+
+                    $priority = $annotation->priority ?? 50; // Default to 50 if not set in annotation
+                    $provider->attach($callable, $priority);
+                }
+            }
         }
     }
 
