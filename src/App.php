@@ -360,12 +360,18 @@ final class App {
             if ($file->isDot() || $file->getExtension() !== 'php') continue;
 
             $listenerClass = 'Kuza\Krypton\\Framework\\Events\\Listeners\\' . $file->getBasename('.php');
+
+            print "listener class = $listenerClass\n";
+
             $reflectionClass = new \ReflectionClass($listenerClass);
 
             foreach ($reflectionClass->getMethods() as $method) {
+                print "reflection method: $method->name\n";
                 if ($annotation = $annotationReader->getMethodAnnotation($method, EventListener::class)) {
                     $listenerInstance = new $listenerClass();
                     $callable = [$listenerInstance, $method->getName()];
+
+                    print "callable {$method->getName()}\n";
 
                     $priority = $annotation->priority ?? 50; // Default to 50 if not set in annotation
                     $provider->attach($callable, $priority);
