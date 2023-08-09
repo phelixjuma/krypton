@@ -368,7 +368,11 @@ final class App {
             foreach ($reflectionClass->getMethods() as $method) {
                 print "reflection method: $method->name\n";
                 if ($annotation = $annotationReader->getMethodAnnotation($method, EventListener::class)) {
+
                     $listenerInstance = new $listenerClass();
+
+                    print "listener instance\n";
+
                     $callable = [$listenerInstance, $method->getName()];
 
                     print "callable {$method->getName()}\n";
