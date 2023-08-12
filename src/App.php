@@ -477,4 +477,35 @@ final class App {
         // we require the layout file
         require $this->getLayout();
     }
+
+    /**
+     * @return mixed
+     */
+    public function appRoot() {
+        return self::getInstance()->app_root;
+    }
+
+    /**
+     * @return string
+     */
+    public function publicDirectory(): string
+    {
+        return self::getInstance()->app_root . DIRECTORY_SEPARATOR . 'Public';
+    }
+
+    /**
+     * @return Requests
+     */
+    public function requests(): Requests
+    {
+        return self::getInstance()->requests;
+    }
+
+    /**
+     * @return Response
+     */
+    public function response(): Response
+    {
+        return self::getInstance()->response;
+    }
 }
