@@ -481,14 +481,14 @@ final class App {
     /**
      * @return mixed
      */
-    public function appRoot() {
+    public static function appRoot() {
         return self::getInstance()->app_root;
     }
 
     /**
      * @return string
      */
-    public function publicDirectory(): string
+    public static function publicDirectory(): string
     {
         return self::getInstance()->app_root . DIRECTORY_SEPARATOR . 'Public';
     }
@@ -496,7 +496,7 @@ final class App {
     /**
      * @return Requests
      */
-    public function requests(): Requests
+    public static function requests(): Requests
     {
         return self::getInstance()->requests;
     }
@@ -504,7 +504,7 @@ final class App {
     /**
      * @return Response
      */
-    public function response(): Response
+    public static function response(): Response
     {
         return self::getInstance()->response;
     }
