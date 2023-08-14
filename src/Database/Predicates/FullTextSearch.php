@@ -2,7 +2,7 @@
 
 namespace Kuza\Krypton\Database\Predicates;
 
-class Match extends Predicate
+class FullTextSearch extends Predicate
 {
         public function getExpression($param_prefix=null)
         {
