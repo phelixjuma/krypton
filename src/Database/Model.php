@@ -178,9 +178,8 @@ class Model extends DBHandler {
      * @param string $exclude
      */
     public function prepareFullTextSearchKeyWord(&$keyword, $partialWord=true, $fullPhrase=false, $exclude="") {
-
         // Replace all non word characters with wildcard *
-        $sane = preg_replace('/[^\p{L}\p{N}_]+/u', '*', $keyword);
+        $sane = preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $keyword);
 
         // 'apple*'
         // Find rows that contain words such as “apple”, “apples”, “applesauce”, or “applet”.
@@ -201,7 +200,7 @@ class Model extends DBHandler {
 
         // handle exclusions.
         if (strlen($exclude) > 0) {
-            $split = explode(" ", preg_replace('/[^\p{L}\p{N}_]+/u', '*', $exclude));
+            $split = explode(" ", preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $exclude));
             $words = [];
             foreach($split as $word) {
                 if(strlen($word) > 0)
