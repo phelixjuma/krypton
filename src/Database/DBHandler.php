@@ -772,14 +772,15 @@ abstract class DBHandler {
 
             if (isset($data[$key]) && $data[$key] == '0') {
                 $value = '0';
+            } elseif (isset($data[$key]) && trim($data[$key]) == "") {
+                $value = null;
             } else {
-                $value = isset($data[$key]) && !is_array($data[$key]) && !empty($data[$key]) ? trim($data[$key]) : $default_value;
+                $value = isset($data[$key]) && !is_array($data[$key]) ? trim($data[$key]) : $default_value;
             }
-
             $result[$key] = trim($value);
         }
         $sanitized_data = array_filter($result, function($r) {
-            return empty($r) && $r != '0' ? false: true;
+            return !((empty($r) && $r !== '0' && !is_null($r)));
         });
         return $sanitized_data;
     }
