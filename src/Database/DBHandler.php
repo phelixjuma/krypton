@@ -765,19 +765,24 @@ abstract class DBHandler {
 
         $result=[];
 
+        $dataKeys = array_keys($data);
+
         for($i=0 ; $i < count($this->columns) ; $i++) {
 
             $default_value = ($use_defaults==true)? $default[$i] : null;
             $key = $this->columns[$i];
 
-            if (isset($data[$key]) && $data[$key] == '0') {
-                $value = '0';
-            } elseif (isset($data[$key]) && trim($data[$key]) == "") {
-                $value = null;
-            } else {
-                $value = isset($data[$key]) && !is_array($data[$key]) ? trim($data[$key]) : $default_value;
+            if (in_array($key, $dataKeys)) {
+
+                if (isset($data[$key]) && $data[$key] == '0') {
+                    $value = '0';
+                } elseif (isset($data[$key]) && trim($data[$key]) == "") {
+                    $value = null;
+                } else {
+                    $value = isset($data[$key]) && !is_array($data[$key]) ? trim($data[$key]) : $default_value;
+                }
+                $result[$key] = !empty($value) ? trim($value) : $value;
             }
-            $result[$key] = !empty($value) ? trim($value) : $value;
         }
         return array_filter($result, function($r) {
             return !(empty($r) && $r !== '0' && !is_null($r));
