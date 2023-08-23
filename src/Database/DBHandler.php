@@ -777,12 +777,11 @@ abstract class DBHandler {
             } else {
                 $value = isset($data[$key]) && !is_array($data[$key]) ? trim($data[$key]) : $default_value;
             }
-            $result[$key] = trim($value);
+            $result[$key] = !empty($value) ? trim($value) : $value;
         }
-        $sanitized_data = array_filter($result, function($r) {
-            return !((empty($r) && $r !== '0' && !is_null($r)));
+        return array_filter($result, function($r) {
+            return !(empty($r) && $r !== '0' && !is_null($r));
         });
-        return $sanitized_data;
     }
 
     /**
