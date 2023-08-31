@@ -15,6 +15,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Dotenv\Dotenv;
 use Kuza\Krypton\Classes\Response;
 use Kuza\Krypton\Config\Config;
+use Monolog\Level;
 use Pecee\Http\Middleware\Exceptions\TokenMismatchException;
 use Pecee\SimpleRouter\Exceptions\HttpException;
 use Pecee\SimpleRouter\Exceptions\NotFoundHttpException;
@@ -25,6 +26,11 @@ use Kuza\Krypton\Classes\Requests;
 use Kuza\Krypton\Framework\EventListener;
 use Phoole\Event\Dispatcher;
 use Phoole\Event\Provider;
+use Predis\Client;
+use Libcast\JobQueue\Queue\QueueFactory;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Libcast\JobQueue\JobQueue;
 
 
 /**
@@ -68,6 +74,11 @@ final class App {
      * @var Dispatcher $eventsDispatcher
      */
     public $eventsDispatcher;
+
+    /**
+     * @var JobQueue
+     */
+    public $jobQueue;
 
     /**
      * @var Benchmark $benchmark the benchmark handler
@@ -168,6 +179,9 @@ final class App {
 
         // Load listeners (or other services) via annotations and register them
         $this->registerListenersFromAnnotations();
+
+        // Set job queue
+        $this->instantiateJobQueue();
 
         try {
             $displayErrors = Config::getSpecificConfig("DISPLAY_ERRORS");
@@ -406,6 +420,32 @@ final class App {
                     //print $e->getMessage();
                 }
             }
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function instantiateJobQueue() {
+
+        try {
+
+            $redisDSN = Config::getSpecificConfig("JOBQUEUE_REDIS_DSN");
+
+            if (!empty($redisDSN)) {
+
+                $logger = new Logger('JobQueue');
+                $logger->pushHandler(new StreamHandler($this->app_root . "/Logs/JobQueue.log", Logger::DEBUG));
+
+                $redis = new Client($redisDSN);
+
+                $this->jobQueue = new JobQueue([
+                    'queue'  => QueueFactory::build($redis),
+                    'logger' => $logger,
+                ]);
+            }
+
+        } catch (\Exception $e) {
         }
     }
 
