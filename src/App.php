@@ -25,11 +25,8 @@ use Kuza\Krypton\Classes\Requests;
 use Kuza\Krypton\Framework\EventListener;
 use Phoole\Event\Dispatcher;
 use Phoole\Event\Provider;
-use Predis\Client;
-use Libcast\JobQueue\Queue\QueueFactory;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use Libcast\JobQueue\JobQueue;
 
 
 /**
@@ -75,7 +72,7 @@ final class App {
     public $eventsDispatcher;
 
     /**
-     * @var JobQueue
+     * @var \Resque
      */
     public $jobQueue;
 
@@ -441,15 +438,8 @@ final class App {
 
             if (!empty($redisDSN)) {
 
-                $logger = new Logger('JobQueue');
-                $logger->pushHandler(new StreamHandler($this->app_root . "/Logs/JobQueue.log", Logger::DEBUG));
+                $this->jobQueue = \Resque::loadConfig('my-custom-config.yml');
 
-                $redis = new Client($redisDSN);
-
-                $this->jobQueue = new JobQueue([
-                    'queue'  => QueueFactory::build($redis),
-                    'logger' => $logger,
-                ]);
             }
 
         } catch (\Exception $e) {
