@@ -15,7 +15,6 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Dotenv\Dotenv;
 use Kuza\Krypton\Classes\Response;
 use Kuza\Krypton\Config\Config;
-use Monolog\Level;
 use Pecee\Http\Middleware\Exceptions\TokenMismatchException;
 use Pecee\SimpleRouter\Exceptions\HttpException;
 use Pecee\SimpleRouter\Exceptions\NotFoundHttpException;
@@ -79,6 +78,11 @@ final class App {
      * @var JobQueue
      */
     public $jobQueue;
+
+    /**
+     * @var Logger
+     */
+    public $logger;
 
     /**
      * @var Benchmark $benchmark the benchmark handler
@@ -182,6 +186,9 @@ final class App {
 
         // Set job queue
         $this->instantiateJobQueue();
+
+        // Set logger
+        $this->setLogger();
 
         try {
             $displayErrors = Config::getSpecificConfig("DISPLAY_ERRORS");
@@ -445,6 +452,17 @@ final class App {
                 ]);
             }
 
+        } catch (\Exception $e) {
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function setLogger() {
+        try {
+            $this->logger = new Logger('App');
+            $this->logger->pushHandler(new StreamHandler($this->app_root . "/Logs/App.log", Logger::DEBUG));
         } catch (\Exception $e) {
         }
     }
