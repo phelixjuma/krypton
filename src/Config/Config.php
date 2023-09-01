@@ -65,12 +65,12 @@ final class Config
     }
 
     /**
-     * Get the environment value for a specified configuration variable
      * @param $config_param
-     * @return array|false|string
+     * @return string
      * @throws ConfigurationException
      */
-    public static function getSpecificConfig($config_param) {
+    public static function getSpecificConfig($config_param): string
+    {
 
         if (isset($_SERVER[$config_param]) && !empty($_SERVER[$config_param])) {
 
@@ -78,18 +78,21 @@ final class Config
 
         } else {
 
-            $res = isset($_ENV[$config_param]) ? $_ENV[$config_param] : "";
+            $res = $_ENV[$config_param] ?? "";
 
             if (empty($res)) {
                 $res = getenv($config_param);
             }
         }
         if ($res === false) {
+
+            print "config: $config_param \n";
+            print_r($_ENV);
+
             throw new ConfigurationException("Missing SpecificConfig for " . $config_param, Requests::RESPONSE_INTERNAL_SERVER_ERROR);
         }
 
-        $res = trim($res);
-        return $res;
+        return trim($res);
     }
 
     /**

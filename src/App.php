@@ -167,8 +167,6 @@ final class App {
             print_r($e->getMessage());
         }
 
-        print_r($_ENV);
-
         //set the php-di container
         $builder = new \DI\ContainerBuilder();
         //$builder->useAnnotations(true);
