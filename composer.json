@@ -28,7 +28,7 @@
         "phpmailer/phpmailer": "^6.1.6",
         "aws/aws-sdk-php": "^3.81",
         "kreait/firebase-php": "^5.0",
-        "vlucas/phpdotenv": "^4.1",
+        "vlucas/phpdotenv": "^5.3",
         "php-di/php-di": "^6.1",
         "pecee/simple-router": "4.2.0.6",
         "rakit/validation": "^1.2",
