@@ -72,11 +72,6 @@ final class App {
     public $eventsDispatcher;
 
     /**
-     * @var \Resque
-     */
-    public $jobQueue;
-
-    /**
      * @var Logger
      */
     public $logger;
@@ -180,9 +175,6 @@ final class App {
 
         // Load listeners (or other services) via annotations and register them
         $this->registerListenersFromAnnotations();
-
-        // Set job queue
-        $this->instantiateJobQueue();
 
         // Set logger
         $this->setLogger();
@@ -424,25 +416,6 @@ final class App {
                     //print $e->getMessage();
                 }
             }
-        }
-    }
-
-    /**
-     * @return void
-     */
-    private function instantiateJobQueue() {
-
-        try {
-
-            $redisDSN = Config::getSpecificConfig("JOBQUEUE_REDIS_DSN");
-
-            if (!empty($redisDSN)) {
-
-                $this->jobQueue = \Resque::loadConfig('my-custom-config.yml');
-
-            }
-
-        } catch (\Exception $e) {
         }
     }
 
