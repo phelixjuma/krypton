@@ -74,28 +74,6 @@ final class Config
         $value = $_SERVER[$config_param] ?: (getenv($config_param) ?: ($_ENV[$config_param] ?? ""));
 
         return trim($value);
-
-//        if (isset($_SERVER[$config_param]) && !empty($_SERVER[$config_param])) {
-//
-//            $res = $_SERVER[$config_param];
-//
-//        } else {
-//
-//            $res = $_ENV[$config_param] ?? "";
-//
-//            if (empty($res)) {
-//                $res = getenv($config_param);
-//            }
-//        }
-//        if ($res === false) {
-//
-//            print "config: $config_param \n";
-//            print_r($_ENV);
-//
-//            throw new ConfigurationException("Missing SpecificConfig for " . $config_param, Requests::RESPONSE_INTERNAL_SERVER_ERROR);
-//        }
-//
-//        return trim($res);
     }
 
     /**
