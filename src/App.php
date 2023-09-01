@@ -164,7 +164,7 @@ final class App {
             $dotenv = Dotenv::createImmutable($this->app_root);
             $dotenv->load();
         } catch (\Exception $e) {
-            //print_r($e->getMessage());
+            print_r($e->getMessage());
         }
 
         //set the php-di container
@@ -175,9 +175,6 @@ final class App {
 
         // Load listeners (or other services) via annotations and register them
         $this->registerListenersFromAnnotations();
-
-        // Set logger
-        $this->setLogger();
 
         try {
             $displayErrors = Config::getSpecificConfig("DISPLAY_ERRORS");
@@ -416,17 +413,6 @@ final class App {
                     //print $e->getMessage();
                 }
             }
-        }
-    }
-
-    /**
-     * @return void
-     */
-    private function setLogger() {
-        try {
-            $this->logger = new Logger('App');
-            $this->logger->pushHandler(new StreamHandler($this->app_root . "/Logs/App.log", Logger::DEBUG));
-        } catch (\Exception $e) {
         }
     }
 
