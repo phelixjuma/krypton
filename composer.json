@@ -34,7 +34,7 @@
         "rakit/validation": "^1.2",
         "geoip2/geoip2": "~2.0",
         "shuchkin/simplexlsxgen": "^1.1",
-        "ramsey/uuid": "^3.0",
+        "ramsey/uuid": "^4.7",
         "guzzlehttp/guzzle": "^7.7",
         "doctrine/annotations": "^2.0",
         "phoole/event": "^1.1"
