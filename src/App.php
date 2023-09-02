@@ -11,6 +11,8 @@
 namespace Kuza\Krypton;
 
 use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Dotenv\Dotenv;
 use Kuza\Krypton\Classes\Response;
@@ -70,11 +72,6 @@ final class App {
      * @var Dispatcher $eventsDispatcher
      */
     public $eventsDispatcher;
-
-    /**
-     * @var Logger
-     */
-    public $logger;
 
     /**
      * @var Benchmark $benchmark the benchmark handler
@@ -422,6 +419,16 @@ final class App {
     public static function events(): Dispatcher
     {
         return self::getInstance()->eventsDispatcher;
+    }
+
+    /**
+     * @param $class
+     * @return mixed
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
+    public static function Container($class) {
+        return self::getInstance()->DIContainer->get($class);
     }
 
     /**
