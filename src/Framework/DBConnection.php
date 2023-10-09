@@ -72,4 +72,12 @@ class DBConnection extends Model {
 
         return $GLOBALS['pdoConnection'];
     }
+
+    public function closeConnection() {
+        $GLOBALS['pdoConnection'] = null;
+    }
+
+    public function __destruct() {
+        $this->closeConnection();
+    }
 }

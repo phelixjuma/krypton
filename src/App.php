@@ -170,9 +170,6 @@ final class App {
 
         $this->DIContainer = $builder->build();
 
-        // Load listeners (or other services) via annotations and register them
-        $this->registerListenersFromAnnotations();
-
         try {
             $displayErrors = Config::getSpecificConfig("DISPLAY_ERRORS");
         } catch (\Exception $e) {
@@ -365,51 +362,6 @@ final class App {
             require_once  $classFile;
         } else {
             echo "file does not exist: ". $classFile;
-        }
-    }
-
-    /**
-     * @return void
-     * @throws \ReflectionException
-     */
-    private function registerListenersFromAnnotations() {
-
-        $annotationReader = new AnnotationReader();
-        $provider = new Provider();
-
-        $this->eventsDispatcher = new Dispatcher($provider);
-
-        $listenerDir = $this->app_root . DIRECTORY_SEPARATOR . $this->event_listeners_directory .DIRECTORY_SEPARATOR;
-
-
-        foreach (new \DirectoryIterator($listenerDir) as $file) {
-            if ($file->isDot() || $file->getExtension() !== 'php') continue;
-
-            $listenerClass = 'Kuza\Krypton\\Framework\\Events\\Listeners\\' . $file->getBasename('.php');
-
-            $reflectionClass = new \ReflectionClass($listenerClass);
-
-            foreach ($reflectionClass->getMethods() as $method) {
-
-                try {
-                    $annotation = $annotationReader->getMethodAnnotation($method, EventListener::class);
-
-                    if ($annotation) {
-
-                        // Use the DI container to resolve the instance and its dependencies
-                        $listenerInstance = $this->DIContainer->get($listenerClass);
-
-                        $callable = [$listenerInstance, $method->getName()];
-
-                        $priority = $annotation->priority ?? 50; // Default to 50 if not set in annotation
-                        $provider->attach($callable, $priority);
-
-                    }
-
-                } catch (\Exception $e) {
-                    //print $e->getMessage();
-                }
-            }
         }
     }
 
