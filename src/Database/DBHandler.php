@@ -12,7 +12,6 @@ use Kuza\Krypton\Database\Predicates\NestedAnd;
 use Kuza\Krypton\Database\Predicates\NestedOr;
 use Kuza\Krypton\Database\Predicates\PredicateFunction;
 use Kuza\Krypton\Exceptions\CustomException;
-use Kuza\Krypton\Framework\Database;
 
 class DBHandler {
 
@@ -42,27 +41,14 @@ class DBHandler {
      */
     protected $pdo;
 
-    /**
-     * @param Database $database
-     * @param $table
-     */
-    public function __construct(Database $database, $table = null) {
+    public function __construct(\PDO $pdo, $table = null) {
 
-        $this->pdo = $database->getConnection();
+        $this->pdo = $pdo;
 
         $this
             ->table($table)
             ->prepareModel();
     }
-
-//    public function __construct(\PDO $pdo, $table = null) {
-//
-//        $this->pdo = $pdo;
-//
-//        $this
-//            ->table($table)
-//            ->prepareModel();
-//    }
 
     /**
      * Adds the database PDO adapter
