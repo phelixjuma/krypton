@@ -100,10 +100,11 @@ class DBHandler {
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getConnectionOptions() {
-        return $this->getConnectionOptions();
+    public function getConnectionOptions(): array
+    {
+        return $this->connectionOptions;
     }
 
     /**
