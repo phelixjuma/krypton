@@ -15,6 +15,8 @@ use Kuza\Krypton\Exceptions\CustomException;
 
 class DBHandler {
 
+    const MAX_RETRIES = 3;
+
     private $db;
 
     protected static $db_adapters = [];
@@ -36,6 +38,16 @@ class DBHandler {
 
     public $total_records = 0;
 
+    private $source;
+    private $user;
+    private $password;
+
+    private $connectionOptions = array(
+        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        \PDO::ATTR_PERSISTENT => true,
+        \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+    );
+
     /**
      * @var \PDO $pdo
      */
@@ -48,6 +60,68 @@ class DBHandler {
         $this
             ->table($table)
             ->prepareModel();
+    }
+
+    public function setSource($source) {
+        $this->source = $source;
+    }
+
+    public function setUser($user) {
+        $this->user = $user;
+    }
+
+    /**
+     * @param $password
+     * @return void
+     */
+    public function setPassword($password) {
+        $this->password = $password;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSource() {
+        return $this->source;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUser() {
+        return $this->user;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPassword() {
+        return $this->password;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConnectionOptions() {
+        return $this->getConnectionOptions();
+    }
+
+    /**
+     * @return void
+     */
+    private function reconnect() {
+
+        $GLOBALS['pdoConnection'] = new \PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
+
+        $this->pdo = $GLOBALS['pdoConnection'];
+    }
+
+    /**
+     * @return void
+     */
+    public function disconnect() {
+        $GLOBALS['pdoConnection'] = null;
+        $this->pdo = null;
     }
 
     /**
@@ -387,19 +461,46 @@ class DBHandler {
      * @return int
      */
     protected function executeStatement(\PDOStatement $statement, $params=null) {
-        try {
-            $this->success=(int)$statement->execute($params);
-            $this->recordsAffected=(int)$statement->rowCount();
-            $this->lastAffectedId = $this->adapter()->lastInsertId();
-            $this->is_error=false;
-            $this->message='success';
-        } catch (\Exception $ex) {
-            $this->recordsAffected=0;
-            $this->lastAffectedId=null;
-            $this->is_error=true;
-            $this->message = "{$statement->errorInfo()[0]} {$statement->errorInfo()[1]} {$statement->errorInfo()[2]}";
+
+        for ($try = 0; $try < self::MAX_RETRIES; $try++) {
+            try {
+
+                $this->success=(int)$statement->execute($params);
+                $this->recordsAffected=(int)$statement->rowCount();
+                $this->lastAffectedId = $this->adapter()->lastInsertId();
+                $this->is_error=false;
+                $this->message='success';
+
+                // If success, break the loop
+                break;
+
+            } catch (\PDOException $e) {
+                // Check if the error is a connection issue (you might need to adjust error code)
+                if (self::hasGoneAway($ex)) {
+                    // Try to reconnect
+                    $this->reconnect();
+                    continue; // Go to the next iteration and retry the operation
+                } else {
+                    // If it's a different error, throw it again
+                    $this->recordsAffected=0;
+                    $this->lastAffectedId=null;
+                    $this->is_error=true;
+                    $this->message = "{$statement->errorInfo()[0]} {$statement->errorInfo()[1]} {$statement->errorInfo()[2]}";
+
+                    break;
+                }
+            }
         }
         return $this->recordsAffected;
+    }
+
+    /**
+     * @param \PDOException $e
+     * @return bool
+     */
+    public static function hasGoneAway(\PDOException $e): bool
+    {
+        return ($e->getCode() == 'HY000' && stristr($e->getMessage(), 'server has gone away'));
     }
 
     /**
@@ -470,14 +571,6 @@ class DBHandler {
      */
     public function deleteOne($id) {
         return $this->delete([$this->prkey=>$id]);
-    }
-
-    /**
-     * Delete all records from a table
-     * @return int
-     */
-    public function deleteAll() {
-        return $this->delete();
     }
 
     /**
@@ -605,6 +698,10 @@ class DBHandler {
             return $this->insert($data);
     }
 
+    private function execute() {
+
+    }
+
     /**
      * Handle SELECT SQL statement
      *
@@ -674,24 +771,41 @@ class DBHandler {
        // print $sql."\n";
 
         $result = [];
-        try {
 
-            // get the records
-            $statement=$this->createStatement($sql,$params,$values);
-            $statement->execute();
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            $this->recordsSelected = $statement->rowCount();
+        for ($try = 0; $try < self::MAX_RETRIES; $try++) {
 
-            // count the records
-            $count_statement=$this->createStatement($count_sql,$params,$values);
-            $count_statement->execute();
-            $count_result = $count_statement->fetchAll(\PDO::FETCH_ASSOC);
-            $this->total_records = ($count_result && count($count_result)>0 && (int)$count_result[0][$this->prkey]>0)? (int)$count_result[0][$this->prkey] : 0;
-            //$this->total_records = $count_statement->rowCount();
+            try {
 
-        } catch(\Exception $e) {
-            $this->is_error = true;
-            $this->message = $e->getMessage();
+
+                // get the records
+                $statement=$this->createStatement($sql,$params,$values);
+                $statement->execute();
+                $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                $this->recordsSelected = $statement->rowCount();
+
+                // count the records
+                $count_statement=$this->createStatement($count_sql,$params,$values);
+                $count_statement->execute();
+                $count_result = $count_statement->fetchAll(\PDO::FETCH_ASSOC);
+                $this->total_records = ($count_result && count($count_result)>0 && (int)$count_result[0][$this->prkey]>0)? (int)$count_result[0][$this->prkey] : 0;
+                //$this->total_records = $count_statement->rowCount();
+
+                // Success, we break out of the loop.
+                break;
+
+            } catch(\PDOException $e) {
+
+                if (self::hasGoneAway($e)) {
+                    // reconnect and continue to next iteration
+                    $this->reconnect();
+                    continue;
+                } else {
+                    // different error, set it and break out of loop.
+                    $this->is_error = true;
+                    $this->message = $e->getMessage();
+                    break;
+                }
+            }
         }
 
         return ($this->recordsSelected>0)? $result : null;
@@ -714,20 +828,35 @@ class DBHandler {
 
         $response = [];
 
-        try {
-            $stmt = $this->adapter()->prepare($sql);
+        for ($try = 0; $try < self::MAX_RETRIES; $try++) {
 
-            $stmt->execute($params);
+            try {
+                $stmt = $this->adapter()->prepare($sql);
 
-            // set the resulting array to associative
-            $stmt->setFetchMode(\PDO::FETCH_ASSOC);
+                $stmt->execute($params);
 
-            $response =  $stmt->fetchAll();
+                // set the resulting array to associative
+                $stmt->setFetchMode(\PDO::FETCH_ASSOC);
 
-        } catch (\PDOException $e) {
-            $this->is_error = true;
-            $this->message = $e->getMessage();
+                $response =  $stmt->fetchAll();
+
+                break;
+
+            } catch (\PDOException $e) {
+
+                if (self::hasGoneAway($e)) {
+                    $this->reconnect();
+                    continue;
+                } else {
+
+                    $this->is_error = true;
+                    $this->message = $e->getMessage();
+
+                    break;
+                }
+            }
         }
+
         return $response;
     }
 

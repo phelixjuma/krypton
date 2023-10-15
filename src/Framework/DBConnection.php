@@ -28,8 +28,6 @@ class DBConnection extends Model {
      */
     private function dbConnection($db_name = null) {
 
-        $pdoConnection = null;
-
         try {
 
             if ($db_name !== null || !isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection'])) {
@@ -44,17 +42,16 @@ class DBConnection extends Model {
                     $name = $db_name;
                 }
 
-                $source = $engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4";
-                $user = Config::getDBUser();
-                $password = Config::getDBPassword();
+//                $source = $engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4";
+//                $user = Config::getDBUser();
+//                $password = Config::getDBPassword();
 
-                $GLOBALS['pdoConnection'] = new \PDO($source, $user, $password, array(
-                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                    \PDO::ATTR_PERSISTENT => false,
-                    \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
-                ));
+                $this->setSource($engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4");
+                $this->setUser(Config::getDBUser());
+                $this->setPassword(Config::getDBPassword());
+
+                $GLOBALS['pdoConnection'] = new \PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
             }
-
 
         } catch (\Exception $ex) {
             $title = 'Connection Failed';
@@ -73,8 +70,11 @@ class DBConnection extends Model {
         return $GLOBALS['pdoConnection'];
     }
 
+    /**
+     * @return void
+     */
     public function closeConnection() {
-        $GLOBALS['pdoConnection'] = null;
+        $this->disconnect();
     }
 
     public function __destruct() {
