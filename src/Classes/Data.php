@@ -750,9 +750,9 @@ final class Data {
 
         // Check if it's a single associative array
         if (array_keys($data) === range(0, count($data) - 1) && is_array($data[0])) {
-            $excelData[] = $data;
-        } else {
             $excelData = $data;
+        } else {
+            $excelData[] = $data;
         }
 
         array_unshift($excelData,array_keys($excelData[0]));
