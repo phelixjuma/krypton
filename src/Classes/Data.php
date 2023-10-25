@@ -9,6 +9,11 @@
 
 namespace Kuza\Krypton\Classes;
 
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Shuchkin\SimpleXLSXGen;
+
 /**
  * Miscellaneous utility methods.
  */
@@ -732,5 +737,26 @@ final class Data {
         self::download_send_headers($filename);
         echo self::array2csv($data);
         die();
+    }
+
+    /**
+     * @param $data
+     * @return SimpleXLSXGen
+     */
+    public static function getExcel($data): SimpleXLSXGen
+    {
+
+        $excelData = [];
+
+        // Check if it's a single associative array
+        if (array_keys($data) === range(0, count($data) - 1) && is_array($data[0])) {
+            $excelData[] = $data;
+        } else {
+            $excelData = $data;
+        }
+
+        array_unshift($excelData,array_keys($excelData[0]));
+
+        return SimpleXLSXGen::fromArray( $excelData );
     }
 }
