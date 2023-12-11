@@ -86,6 +86,23 @@ final class Utils {
     }
 
     /**
+     * @param $array
+     * @return mixed
+     */
+    public static function nested_unescape($array) {
+        foreach ($array as $key => &$value) {
+            if (is_array($value)) {
+                // Recursive call if the value is an array
+                $value = self::nested_unescape($value);
+            } else {
+                // Apply unescaping function to the value
+                $value = Utils::full_unescape($value);
+            }
+        }
+        return $array;
+    }
+
+    /**
      * @param $string
      * @return array|string|string[]|null
      */
