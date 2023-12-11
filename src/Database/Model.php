@@ -164,11 +164,12 @@ class Model extends DBHandler {
     }
 
     /**
-     * Return class instance properties
+     * @param $unescape
      * @return mixed
      */
-    protected function toArray() {
-        return  json_decode(json_encode($this), true);
+    protected function toArray($unescape=false) {
+        $data =  json_decode(json_encode($this), true);
+        return $unescape ? Utils::nested_unescape($data) : $data;
     }
 
     /**
