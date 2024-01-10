@@ -285,7 +285,7 @@ final class Requests {
                         $key = $paramKeyValuePair[0];
                         // Don't wrongly interpret PHP debug parameters as filters!
                         if($key !== "XDEBUG_SESSION_START" && $key !== "XDEBUG_PROFILE") {
-                            $filters[urlencode(Utils::escape($key))] = urlencode(Utils::escape($paramKeyValuePair[1]));
+                            $filters[urldecode(Utils::escape($key))] = urldecode(Utils::escape($paramKeyValuePair[1]));
                         }
                     }
                 }
