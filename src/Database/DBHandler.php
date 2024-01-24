@@ -477,7 +477,7 @@ class DBHandler {
 
             } catch (\PDOException $e) {
                 // Check if the error is a connection issue (you might need to adjust error code)
-                if (self::hasGoneAway($ex)) {
+                if ($e instanceof \PDOException && !empty($e) && self::hasGoneAway($ex)) {
                     // Try to reconnect
                     $this->reconnect();
                     continue; // Go to the next iteration and retry the operation
@@ -796,7 +796,7 @@ class DBHandler {
 
             } catch(\PDOException $e) {
 
-                if (self::hasGoneAway($e)) {
+                if ($e instanceof \PDOException && !empty($e) && self::hasGoneAway($e)) {
                     // reconnect and continue to next iteration
                     $this->reconnect();
                     continue;
@@ -845,7 +845,7 @@ class DBHandler {
 
             } catch (\PDOException $e) {
 
-                if (self::hasGoneAway($e)) {
+                if ($e instanceof \PDOException && !empty($e) && self::hasGoneAway($e)) {
                     $this->reconnect();
                     continue;
                 } else {
