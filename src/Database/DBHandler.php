@@ -12,6 +12,7 @@ use Kuza\Krypton\Database\Predicates\NestedAnd;
 use Kuza\Krypton\Database\Predicates\NestedOr;
 use Kuza\Krypton\Database\Predicates\PredicateFunction;
 use Kuza\Krypton\Exceptions\CustomException;
+use function DI\string;
 
 class DBHandler {
 
@@ -477,7 +478,7 @@ class DBHandler {
 
             } catch (\PDOException $e) {
                 // Check if the error is a connection issue (you might need to adjust error code)
-                if ($e instanceof \PDOException && !empty($e) && self::hasGoneAway($ex)) {
+                if (self::hasGoneAway($ex)) {
                     // Try to reconnect
                     $this->reconnect();
                     continue; // Go to the next iteration and retry the operation
@@ -496,11 +497,14 @@ class DBHandler {
     }
 
     /**
-     * @param \PDOException $e
+     * @param $e
      * @return bool
      */
-    public static function hasGoneAway(\PDOException $e): bool
+    public static function hasGoneAway($e): bool
     {
+        if (is_null($e) || !($e instanceof \PDOException)) {
+            return false;
+        }
         return ($e->getCode() == 'HY000' && stristr($e->getMessage(), 'server has gone away'));
     }
 
@@ -796,7 +800,7 @@ class DBHandler {
 
             } catch(\PDOException $e) {
 
-                if ($e instanceof \PDOException && !empty($e) && self::hasGoneAway($e)) {
+                if (self::hasGoneAway($e)) {
                     // reconnect and continue to next iteration
                     $this->reconnect();
                     continue;
@@ -845,7 +849,7 @@ class DBHandler {
 
             } catch (\PDOException $e) {
 
-                if ($e instanceof \PDOException && !empty($e) && self::hasGoneAway($e)) {
+                if (self::hasGoneAway($e)) {
                     $this->reconnect();
                     continue;
                 } else {
