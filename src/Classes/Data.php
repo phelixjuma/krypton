@@ -687,13 +687,11 @@ final class Data {
         $reflectionClass = new \ReflectionClass(get_class($object));
 
         foreach ($reflectionClass->getProperties() as $property) {
+
             $property->setAccessible(true);
             $currentValue = $property->getValue($object);
 
-            if (is_object($currentValue)) {
-                // Recursively reset properties of object properties
-                self::resetObjectPropertiesToNull($currentValue);
-            } else {
+            if (!is_object($currentValue)) {
                 // Set non-object properties to null
                 $property->setValue($object, null);
             }
