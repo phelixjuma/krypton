@@ -663,9 +663,6 @@ final class Data {
      */
     public static function mapArrayToObject(&$object, array $array) {
 
-        // We first reset the properties
-        self::resetObjectPropertiesToNull($object);
-
         // We set values
         $reflectionClass = new \ReflectionClass(get_class($object));
 
