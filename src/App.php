@@ -138,7 +138,7 @@ final class App {
     public function init($app_root = null, $memory_limit=null, $upload_max_filesize=null, $post_max_size=null, $timezone=null) {
 
         // we set the default timezone
-        $d_timezone = $timezone ?? "Africa/Nairobi";
+        $d_timezone = $timezone ?? "UTC";
         date_default_timezone_set($d_timezone);
 
         $this->app_root = !empty($app_root) ? $app_root : getcwd();
