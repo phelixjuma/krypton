@@ -708,6 +708,79 @@ class DBHandler {
     }
 
     /**
+     * @param $criteria
+     * @param $columns
+     * @param $group_by
+     * @param $order_by
+     * @param $limit
+     * @param $isSearch
+     * @param $distinct
+     * @param $having
+     * @return array
+     */
+    public function getSelectSQL($criteria=null,$columns=null,$group_by=null,$order_by=null,$limit=null, $isSearch = false, $distinct=false, $having=null)
+    {
+
+        $columns = (is_array($columns) && count($columns) > 0) ? implode(',', $columns) : '*';
+
+        $group_by = (is_array($group_by) && count($group_by) > 0) ? implode(',', $group_by) : $group_by;
+        $group_by = (strlen(trim($group_by)) == 0) ? null : " GROUP BY " . $group_by;
+
+        $having = (is_array($having) && count($having) > 0) ? implode(',', $having) : $having;
+        $having = (strlen(trim($having)) == 0) ? null : " HAVING " . $having;
+
+        $order_by = (is_array($order_by) && count($order_by) > 0) ? implode(',', $order_by) : $order_by;
+
+        if (strlen(trim($order_by)) > 0) {
+            $order_by = " ORDER BY " . $order_by;
+        } elseif (!empty($this->primaryKey()) && $order_by != 0) {
+            $order_by = " ORDER BY " . $this->table_name . "." . $this->primaryKey() . " DESC";
+        } else {
+            $order_by = null;
+        }
+
+        if (is_array($criteria) && count($criteria) > 0) {
+
+            if ($isSearch) {
+                $cpv = self::createColumnsParamsValues($criteria, ":", " LIKE ");
+            } else {
+                $cpv = self::createColumnsParamsValues($criteria);
+            }
+            $params = $cpv['params'];
+            $values = $cpv['values'];
+
+            if ($isSearch) {
+                $criteria = implode("\nOR   ", $cpv['columns_equals_params']);
+            } else {
+                $criteria = implode("\nAND   ", $cpv['columns_equals_params']);
+            }
+        } else {
+            $criteria = "1";
+            $params = [];
+            $values = [];
+        }
+
+        $queryLimit = "";
+        if ($limit != null && !empty($limit)) {
+            $queryLimit = "LIMIT $limit";
+        }
+
+        $distinct_part = $distinct ? "DISTINCT" : "";
+
+        $sql = "SELECT $distinct_part $columns FROM $this->table_name $this->join WHERE $criteria $group_by $having $order_by $queryLimit ";
+
+        $count_sql = "SELECT {$this->countColumn($this->prkey,$this->prkey)} FROM $this->table_name $this->join WHERE $criteria $group_by $having";
+
+        return [
+            'select_sql' => $sql,
+            'count_sql' => $count_sql,
+            'params'    => $params,
+            'values'    => $values
+        ];
+
+    }
+
+        /**
      * Handle SELECT SQL statement
      *
      * @param null $criteria
@@ -721,59 +794,12 @@ class DBHandler {
      */
     public function select($criteria=null,$columns=null,$group_by=null,$order_by=null,$limit=null, $isSearch = false, $distinct=false, $having=null) {
 
-        $columns = (is_array($columns) && count($columns)>0)?  implode(',', $columns) : '*';
+        $selectSQL = $this->getSelectSQL($criteria,$columns,$group_by,$order_by,$limit, $isSearch, $distinct, $having);
 
-        $group_by = (is_array($group_by) && count($group_by)>0)?  implode(',', $group_by) : $group_by;
-        $group_by = (strlen(trim($group_by))==0)? null : " GROUP BY ".$group_by;
-
-        $having = (is_array($having) && count($having)>0)?  implode(',', $having) : $having;
-        $having = (strlen(trim($having))==0)? null : " HAVING ".$having;
-
-        $order_by = (is_array($order_by) && count($order_by)>0)?  implode(',', $order_by) : $order_by;
-
-        if (strlen(trim($order_by)) > 0) {
-            $order_by = " ORDER BY ".$order_by;
-        } elseif(!empty($this->primaryKey())) {
-            $order_by = " ORDER BY ". $this->table_name . "." . $this->primaryKey(). " DESC";
-        } else {
-            $order_by = null;
-        }
-        //$order_by = (strlen(trim($order_by))==0) ? null : " ORDER BY ".$order_by;
-
-        if(is_array($criteria) && count($criteria)>0){
-
-            if ($isSearch) {
-                $cpv = self::createColumnsParamsValues($criteria,":", " LIKE ");
-            } else {
-                $cpv = self::createColumnsParamsValues($criteria);
-            }
-            $params=$cpv['params'];
-            $values=$cpv['values'];
-
-            if ($isSearch) {
-                $criteria=implode("\nOR   ", $cpv['columns_equals_params']);
-            } else {
-                $criteria=implode("\nAND   ", $cpv['columns_equals_params']);
-            }
-        }
-        else{
-            $criteria="1";
-            $params=[];
-            $values=[];
-        }
-
-        $queryLimit = "";
-        if($limit != null && !empty($limit)) {
-            $queryLimit = "LIMIT $limit";
-        }
-
-        $distinct_part = $distinct ? "DISTINCT" : "";
-
-        $sql="SELECT $distinct_part $columns FROM $this->table_name $this->join WHERE $criteria $group_by $having $order_by $queryLimit ";
-
-        $count_sql="SELECT {$this->countColumn($this->prkey,$this->prkey)} FROM $this->table_name $this->join WHERE $criteria $group_by $having";
-
-       // print $sql."\n";
+        $sql= $selectSQL['select_sql'];
+        $count_sql= $selectSQL['count_sql'];
+        $params = $selectSQL['params'];
+        $values = $selectSQL['values'];
 
         $result = [];
 
@@ -793,7 +819,6 @@ class DBHandler {
                 $count_statement->execute();
                 $count_result = $count_statement->fetchAll(\PDO::FETCH_ASSOC);
                 $this->total_records = ($count_result && count($count_result)>0 && (int)$count_result[0][$this->prkey]>0)? (int)$count_result[0][$this->prkey] : 0;
-                //$this->total_records = $count_statement->rowCount();
 
                 // Success, we break out of the loop.
                 break;
