@@ -12,7 +12,6 @@ use Kuza\Krypton\Database\Predicates\NestedAnd;
 use Kuza\Krypton\Database\Predicates\NestedOr;
 use Kuza\Krypton\Database\Predicates\PredicateFunction;
 use Kuza\Krypton\Exceptions\CustomException;
-use function DI\string;
 
 class DBHandler {
 
@@ -357,6 +356,15 @@ class DBHandler {
             $this->table_name=$table_name;
             $this->join=null;
         }
+        return $this;
+    }
+
+    /**
+     * @param $table_name
+     * @return $this
+     */
+    public function resetTable($table_name=null) {
+        $this->table_name=$table_name;
         return $this;
     }
 
