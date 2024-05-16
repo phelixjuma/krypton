@@ -732,8 +732,8 @@ class DBHandler {
         $order_by = (is_array($order_by) && count($order_by) > 0) ? implode(',', $order_by) : $order_by;
 
         if (strlen(trim($order_by)) > 0) {
-            $order_by = " ORDER BY " . $order_by;
-        } elseif (!empty($this->primaryKey()) && $order_by != 0) {
+            $order_by = $order_by != 0 ? " ORDER BY " . $order_by : null;
+        } elseif (!empty($this->primaryKey())) {
             $order_by = " ORDER BY " . $this->table_name . "." . $this->primaryKey() . " DESC";
         } else {
             $order_by = null;
