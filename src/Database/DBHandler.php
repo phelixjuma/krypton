@@ -780,19 +780,19 @@ class DBHandler {
 
     }
 
-        /**
-     * Handle SELECT SQL statement
-     *
-     * @param null $criteria
-     * @param null $columns
-     * @param null $group_by
-     * @param null $order_by
-     * @param null $limit
-     * @param bool $isSearch
-     * @param bool $distinct
-     * @return array|null
+    /**
+     * @param $criteria
+     * @param $columns
+     * @param $group_by
+     * @param $order_by
+     * @param $limit
+     * @param $isSearch
+     * @param $distinct
+     * @param $having
+     * @param $count
+     * @return array|false|null
      */
-    public function select($criteria=null,$columns=null,$group_by=null,$order_by=null,$limit=null, $isSearch = false, $distinct=false, $having=null) {
+    public function select($criteria=null,$columns=null,$group_by=null,$order_by=null,$limit=null, $isSearch = false, $distinct=false, $having=null, $count = true) {
 
         $selectSQL = $this->getSelectSQL($criteria,$columns,$group_by,$order_by,$limit, $isSearch, $distinct, $having);
 
@@ -815,10 +815,12 @@ class DBHandler {
                 $this->recordsSelected = $statement->rowCount();
 
                 // count the records
-                $count_statement=$this->createStatement($count_sql,$params,$values);
-                $count_statement->execute();
-                $count_result = $count_statement->fetchAll(\PDO::FETCH_ASSOC);
-                $this->total_records = ($count_result && count($count_result)>0 && (int)$count_result[0][$this->prkey]>0)? (int)$count_result[0][$this->prkey] : 0;
+                if ($count) {
+                    $count_statement=$this->createStatement($count_sql,$params,$values);
+                    $count_statement->execute();
+                    $count_result = $count_statement->fetchAll(\PDO::FETCH_ASSOC);
+                    $this->total_records = ($count_result && count($count_result)>0 && (int)$count_result[0][$this->prkey]>0)? (int)$count_result[0][$this->prkey] : 0;
+                }
 
                 // Success, we break out of the loop.
                 break;
@@ -838,7 +840,7 @@ class DBHandler {
             }
         }
 
-        return ($this->recordsSelected>0)? $result : null;
+        return ($this->recordsSelected > 0)? $result : null;
     }
 
     /**
