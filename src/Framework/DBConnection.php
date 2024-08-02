@@ -20,7 +20,7 @@ class DBConnection extends Model {
      */
     public function __construct($table = null, $database = null) {
 
-        parent::__construct($this->dbConnection($database), $table);
+        parent::__construct($this->dbConnection($database), $database, $table);
     }
 
     /**

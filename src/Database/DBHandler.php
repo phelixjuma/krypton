@@ -4,6 +4,7 @@ namespace Kuza\Krypton\Database;
 
 use Kuza\Krypton\Classes\Data;
 
+use Kuza\Krypton\Config\Config;
 use Kuza\Krypton\Database\Predicates\Between;
 use Kuza\Krypton\Database\Predicates\DateDiffGreaterThanOrEqualTo;
 use Kuza\Krypton\Database\Predicates\In;
@@ -12,6 +13,7 @@ use Kuza\Krypton\Database\Predicates\NestedAnd;
 use Kuza\Krypton\Database\Predicates\NestedOr;
 use Kuza\Krypton\Database\Predicates\PredicateFunction;
 use Kuza\Krypton\Exceptions\CustomException;
+use PDO;
 
 class DBHandler {
 
@@ -38,24 +40,31 @@ class DBHandler {
 
     public $total_records = 0;
 
+    private $db_name;
     private $source;
     private $user;
     private $password;
 
     private $connectionOptions = array(
-        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-        \PDO::ATTR_PERSISTENT => true,
-        \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_PERSISTENT => true,
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
     );
 
     /**
-     * @var \PDO $pdo
+     * @var PDO $pdo
      */
     protected $pdo;
 
-    public function __construct(\PDO $pdo, $table = null) {
+    /**
+     * @param PDO $pdo
+     * @param $db_name
+     * @param $table
+     */
+    public function __construct(PDO $pdo, $db_name = null, $table = null) {
 
         $this->pdo = $pdo;
+        $this->db_name = $db_name;
 
         $this
             ->table($table)
@@ -112,9 +121,43 @@ class DBHandler {
      */
     private function reconnect() {
 
-        $GLOBALS['pdoConnection'] = new \PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
+        try {
 
-        $this->pdo = $GLOBALS['pdoConnection'];
+            if ($db_name !== null || !isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection'])) {
+
+                $app_env = Config::getSpecificConfig("APP_ENV");
+
+                $host = Config::getDBHost();
+                $engine = Config::getDBEngine();
+                $port = Config::getDBPort();
+                $name = $app_env == "testing" ? Config::getSpecificConfig("DB_NAME_TESTING") : Config::getDBName();
+                if ($db_name !== null) {
+                    $name = $db_name;
+                }
+
+                $this->setSource($engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4");
+                $this->setUser(Config::getDBUser());
+                $this->setPassword(Config::getDBPassword());
+
+                $GLOBALS['pdoConnection'] = new PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
+
+                $this->pdo = $GLOBALS['pdoConnection'];
+            }
+
+        } catch (\Exception $ex) {
+            $title = 'Connection Failed';
+            switch ($ex->getCode()) {
+                case 2002:
+                    $message = 'Attempt to Connect to database failed';
+                    break;
+                default:
+                    $message = $ex->getMessage();
+                    break;
+            }
+            $response = json_encode(['message' => $message, 'title' => $title, 'status' => 'error']);
+            die($response);
+        }
+
     }
 
     /**
@@ -128,10 +171,10 @@ class DBHandler {
     /**
      * Adds the database PDO adapter
      *
-     * @param \PDO $db
+     * @param PDO $db
      * @return $this
      */
-    protected function addDbAdapter(\PDO $db) {
+    protected function addDbAdapter(PDO $db) {
         $this->db = $db;
 
         return $this;
@@ -139,7 +182,7 @@ class DBHandler {
 
     /**
      * Get the database adapter
-     * @return \PDO
+     * @return PDO
      */
     public function adapter() {
         return $this->db;
@@ -158,7 +201,7 @@ class DBHandler {
         $this->setKeys();
         $this->setColumns();
 
-        $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $this;
     }
@@ -234,7 +277,7 @@ class DBHandler {
         $sql="SHOW INDEX FROM $this->table_name WHERE Key_name = 'PRIMARY' ";
         $statement = $this->adapter()->prepare($sql);
         $statement->execute();
-        $result=$statement->fetch(\PDO::FETCH_ASSOC);
+        $result=$statement->fetch(PDO::FETCH_ASSOC);
         $this->prkey=$result['Column_name'];
 
         return $this;
@@ -819,14 +862,14 @@ class DBHandler {
                 // get the records
                 $statement=$this->createStatement($sql,$params,$values);
                 $statement->execute();
-                $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                $result = $statement->fetchAll(PDO::FETCH_ASSOC);
                 $this->recordsSelected = $statement->rowCount();
 
                 // count the records
                 if ($count) {
                     $count_statement=$this->createStatement($count_sql,$params,$values);
                     $count_statement->execute();
-                    $count_result = $count_statement->fetchAll(\PDO::FETCH_ASSOC);
+                    $count_result = $count_statement->fetchAll(PDO::FETCH_ASSOC);
                     $this->total_records = ($count_result && count($count_result)>0 && (int)$count_result[0][$this->prkey]>0)? (int)$count_result[0][$this->prkey] : 0;
                 }
 
@@ -876,7 +919,7 @@ class DBHandler {
                 $stmt->execute($params);
 
                 // set the resulting array to associative
-                $stmt->setFetchMode(\PDO::FETCH_ASSOC);
+                $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
                 $response =  $stmt->fetchAll();
 
