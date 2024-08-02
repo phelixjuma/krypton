@@ -123,7 +123,7 @@ class DBHandler {
 
         try {
 
-            if ($db_name !== null || !isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection'])) {
+            if ($this->db_name !== null || !isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection'])) {
 
                 $app_env = Config::getSpecificConfig("APP_ENV");
 
@@ -131,8 +131,8 @@ class DBHandler {
                 $engine = Config::getDBEngine();
                 $port = Config::getDBPort();
                 $name = $app_env == "testing" ? Config::getSpecificConfig("DB_NAME_TESTING") : Config::getDBName();
-                if ($db_name !== null) {
-                    $name = $db_name;
+                if ($this->db_name !== null) {
+                    $name = $this->db_name;
                 }
 
                 $this->setSource($engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4");
