@@ -63,6 +63,7 @@ class DBHandler {
     public function __construct($db_name = null, $table = null) {
 
         $this->db_name = $db_name;
+        $this->table_name = $table;
 
         $this->dbConnection();
 
@@ -79,6 +80,11 @@ class DBHandler {
     public function __wakeup() {
         // Reinitialize the PDO connection
         $this->dbConnection();
+
+        // Reset the table and prepare model
+        $this
+            ->table($this->table_name)
+            ->prepareModel();
     }
 
     /**
