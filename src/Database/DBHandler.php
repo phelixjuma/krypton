@@ -20,30 +20,23 @@ class DBHandler {
     const MAX_RETRIES = 3;
 
     private $db;
-
-    protected static $db_adapters = [];
-
     protected $table_name;
-
-    private $recordsAffected;
-    private $lastAffectedId;
-    public $recordsSelected;
     private $join;
-
     protected $prkey;
-    protected $is_error;
-    protected $message;
-
-    private $success;
     private $columns;
     private $table_meta;
-
-    public $total_records = 0;
-
     private $db_name;
     private $source;
     private $user;
     private $password;
+
+    private $success;
+    protected $is_error;
+    protected $message;
+    private $recordsAffected;
+    private $lastAffectedId;
+    public $recordsSelected;
+    public $total_records = 0;
 
     private $connectionOptions = array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -74,10 +67,11 @@ class DBHandler {
 
     public function __sleep() {
         // Specify the properties to be serialized
-        return ['source', 'username', 'password', 'db_name', 'table'];
+        return ['table_name', 'join', 'prkey', 'columns', 'table_meta', 'db_name', 'source', 'user', 'password'];
     }
 
     public function __wakeup() {
+
         // Reinitialize the PDO connection
         $this->dbConnection();
 
@@ -266,7 +260,7 @@ class DBHandler {
      */
     protected function prepareModel() {
 
-        $this->db = $this->pdo ? $this->pdo : $this->db;
+        $this->db = $this->pdo ?? $this->db;
 
         $this->setKeys();
         $this->setColumns();
