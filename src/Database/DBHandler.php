@@ -54,7 +54,7 @@ class DBHandler {
     /**
      * @var PDO $pdo
      */
-    protected $pdo;
+    private $pdo;
 
     /**
      * @param $db_name
@@ -62,23 +62,33 @@ class DBHandler {
      */
     public function __construct($db_name = null, $table = null) {
 
-        $this->dbConnection($db_name);
-
         $this->db_name = $db_name;
+
+        $this->dbConnection();
 
         $this
             ->table($table)
             ->prepareModel();
     }
 
+    public function __sleep() {
+        // Specify the properties to be serialized
+        return ['source', 'username', 'password', 'db_name', 'table'];
+    }
+
+    public function __wakeup() {
+        // Reinitialize the PDO connection
+        $this->dbConnection();
+    }
+
     /**
      * Connect to the database. Sets the PDO connection.
      */
-    private function dbConnection($db_name = null) {
+    private function dbConnection() {
 
         try {
 
-            if ($db_name !== null || !isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection'])) {
+            if ($this->db_name !== null || !isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection'])) {
 
                 $app_env = Config::getSpecificConfig("APP_ENV");
 
@@ -86,13 +96,9 @@ class DBHandler {
                 $engine = Config::getDBEngine();
                 $port = Config::getDBPort();
                 $name = $app_env == "testing" ? Config::getSpecificConfig("DB_NAME_TESTING") : Config::getDBName();
-                if ($db_name !== null) {
-                    $name = $db_name;
+                if ($this->db_name !== null) {
+                    $name = $this->db_name;
                 }
-
-//                $source = $engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4";
-//                $user = Config::getDBUser();
-//                $password = Config::getDBPassword();
 
                 $this->setSource($engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4");
                 $this->setUser(Config::getDBUser());
