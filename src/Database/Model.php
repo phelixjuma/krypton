@@ -7,7 +7,6 @@ use Kuza\Krypton\Classes\Dates;
 use Kuza\Krypton\Classes\Utils;
 use Kuza\Krypton\Database\Predicates\Between;
 use Kuza\Krypton\Framework\RoutesHelper;
-use PDO;
 use Ramsey\Uuid\Uuid;
 
 class Model extends DBHandler {
@@ -17,13 +16,12 @@ class Model extends DBHandler {
 
 
     /**
-     * @param PDO $pdo
      * @param $db_name
      * @param $table
      */
-    public function __construct(PDO $pdo, $db_name = null, $table = null) {
+    public function __construct($db_name = null, $table = null) {
 
-        parent::__construct($pdo, $db_name, $table);
+        parent::__construct($db_name, $table);
 
     }
 
