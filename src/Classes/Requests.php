@@ -319,12 +319,22 @@ final class Requests {
 
         if (sizeof($filters) > 0) {
             foreach ($filters as $key => $value) {
-                $valueParts = explode(",",$value);
 
-                if (sizeof($valueParts) > 1) {
-                    $formattedFilters[$key] = $valueParts;
+                // First, we check if a value is a valid json string
+                if (Utils::isJson($value)) {
+                    $value = Data::jsonDecode($value);
+                }
+
+                if (!is_string($value)) {
+                    $formattedFilters[$key] = $value;
                 } else {
-                    $formattedFilters[$key] = $valueParts[0];
+                    $valueParts = explode(",",$value);
+
+                    if (sizeof($valueParts) > 1) {
+                        $formattedFilters[$key] = $valueParts;
+                    } else {
+                        $formattedFilters[$key] = $valueParts[0];
+                    }
                 }
             }
         }

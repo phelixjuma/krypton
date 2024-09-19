@@ -506,4 +506,15 @@ final class Utils {
             mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
         );
     }
+
+    public static function isJson($string) {
+
+        if (!is_string($string)) {
+            return false;
+        }
+
+        json_decode($string);
+
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
 }
