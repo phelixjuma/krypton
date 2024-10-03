@@ -505,18 +505,23 @@ class DBHandler {
                     /*if the argument supplied is an object we obtain values, expression from the object accessor methods */
                     if(is_object($value))
                     {
-                        $column = str_replace('.', '',$value->getAlias());
-                        $alias = $column;
-                        $columns[] = $column;
-                        $param =$params_prefix.$alias;
-                        $params[] = $param;
-                        $bound_val = $value->getValue();
-                        $bound_exp = $value->getExpression($params_prefix);
+                        if(empty($value->getAlias())) {
+                            // Handle as raw SQL expression, not as a parameter
+                            $expression = $value->getExpression();
+                        } else {
+                            $column = str_replace('.', '',$value->getAlias());
+                            $alias = $column;
+                            $columns[] = $column;
+                            $param =$params_prefix.$alias;
+                            $params[] = $param;
+                            $bound_val = $value->getValue();
+                            $bound_exp = $value->getExpression($params_prefix);
 
-                        $values[] = is_array($bound_val)==true? implode(',', $bound_val) : $bound_val;
-                        $not = preg_match('/NOT/i',get_class($value));
-                        $formula = $not? "ISNULL($column) OR FIND_IN_SET($column,$param)=0" : "FIND_IN_SET($column,$param)>0";
-                        $expression = is_array($bound_val)==true? $formula : $bound_exp;
+                            $values[] = is_array($bound_val)==true? implode(',', $bound_val) : $bound_val;
+                            $not = preg_match('/NOT/i',get_class($value));
+                            $formula = $not? "ISNULL($column) OR FIND_IN_SET($column,$param)=0" : "FIND_IN_SET($column,$param)>0";
+                            $expression = is_array($bound_val)==true? $formula : $bound_exp;
+                        }
                     }
                     else
                     {
