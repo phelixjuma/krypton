@@ -884,6 +884,8 @@ class DBHandler {
 
         $sql = "SELECT $distinct_part $columns FROM $this->table_name $this->join WHERE $criteria $group_by $having $order_by $queryLimit ";
 
+        print "\nSQL: $sql\n";
+
         $count_sql = "SELECT {$this->countColumn($this->prkey,$this->prkey)} FROM $this->table_name $this->join WHERE $criteria $group_by $having";
 
         return [
