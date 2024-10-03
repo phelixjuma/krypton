@@ -927,7 +927,7 @@ class DBHandler {
 
                 // get the records
                 $statement=$this->createStatement($sql,$params,$values);
-                print "\nSQL: {$statement->queryString}\n";
+
                 $statement->execute();
                 $result = $statement->fetchAll(PDO::FETCH_ASSOC);
                 $this->recordsSelected = $statement->rowCount();

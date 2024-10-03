@@ -29,7 +29,7 @@ abstract class Predicate {
 	 */
 	protected $column_alias;
 	
-	public function __construct($left, $right,$column_alias) {
+	public function __construct($left, $right, $column_alias = null) {
 
         $left = $left instanceof Literal ? (string)$left : $left;
         $right = $right instanceof Literal ? (string)$right : $right;
