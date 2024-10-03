@@ -505,7 +505,7 @@ class DBHandler {
                     /*if the argument supplied is an object we obtain values, expression from the object accessor methods */
                     if(is_object($value))
                     {
-                        if(empty($value->useValueAsFieldName())) {
+                        if($value->useValueAsFieldName()) {
                             // Handle as raw SQL expression, not as a parameter
                             $expression = $value->getExpression();
                         } else {
