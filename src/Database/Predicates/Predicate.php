@@ -30,7 +30,11 @@ abstract class Predicate {
 	protected $column_alias;
 	
 	public function __construct($left, $right,$column_alias) {
-		$this->left = $left;
+
+        $left = $left instanceof Literal ? (string)$left : $left;
+        $right = $right instanceof Literal ? (string)$right : $right;
+
+        $this->left = $left;
 		$this->right = $right;
 		$this->value = $this->right;				
 		if(is_object($left)!==true && is_object($right)!==true)		
