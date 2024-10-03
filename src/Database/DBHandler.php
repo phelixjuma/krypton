@@ -884,7 +884,7 @@ class DBHandler {
 
         $sql = "SELECT $distinct_part $columns FROM $this->table_name $this->join WHERE $criteria $group_by $having $order_by $queryLimit ";
 
-        print "\nSQL: $sql\n";
+        print "\nPREPARED SQL: $sql\n";
 
         $count_sql = "SELECT {$this->countColumn($this->prkey,$this->prkey)} FROM $this->table_name $this->join WHERE $criteria $group_by $having";
 
@@ -927,6 +927,7 @@ class DBHandler {
 
                 // get the records
                 $statement=$this->createStatement($sql,$params,$values);
+                print "\nSQL: {$statement->queryString}\n";
                 $statement->execute();
                 $result = $statement->fetchAll(PDO::FETCH_ASSOC);
                 $this->recordsSelected = $statement->rowCount();
