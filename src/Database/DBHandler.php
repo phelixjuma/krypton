@@ -505,7 +505,7 @@ class DBHandler {
                     /*if the argument supplied is an object we obtain values, expression from the object accessor methods */
                     if(is_object($value))
                     {
-                        if(empty($value->getAlias())) {
+                        if(empty($value->useValueAsFieldName())) {
                             // Handle as raw SQL expression, not as a parameter
                             $expression = $value->getExpression();
                         } else {
@@ -888,8 +888,6 @@ class DBHandler {
         $distinct_part = $distinct ? "DISTINCT" : "";
 
         $sql = "SELECT $distinct_part $columns FROM $this->table_name $this->join WHERE $criteria $group_by $having $order_by $queryLimit ";
-
-        print "\nPREPARED SQL: $sql\n";
 
         $count_sql = "SELECT {$this->countColumn($this->prkey,$this->prkey)} FROM $this->table_name $this->join WHERE $criteria $group_by $having";
 

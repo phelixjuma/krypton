@@ -28,8 +28,16 @@ abstract class Predicate {
 	 * @desc column alias string
 	 */
 	protected $column_alias;
-	
-	public function __construct($left, $right, $column_alias = null) {
+
+    protected $useValueAsFieldName;
+
+    /**
+     * @param $left
+     * @param $right
+     * @param $column_alias
+     * @param $useValueAsFieldName
+     */
+	public function __construct($left, $right, $column_alias = null, $useValueAsFieldName = false) {
 
         $left = $left instanceof Literal ? (string)$left : $left;
         $right = $right instanceof Literal ? (string)$right : $right;
@@ -42,6 +50,9 @@ abstract class Predicate {
 			$this->column_alias = $column_alias;
 			$this->expression = (is_array($left)!=true && is_array($right)!=true)? $this->left . '=' . $this->right : null;
 		}
+
+        $this->useValueAsFieldName = $useValueAsFieldName;
+
 	}
 	public function getExpression() {
 		return $this->expression;
@@ -52,4 +63,8 @@ abstract class Predicate {
 	public function getAlias() {
 		return $this->column_alias;
 	}
+
+    public function useValueAsFieldName() {
+        return $this->useValueAsFieldName === true;
+    }
 }
