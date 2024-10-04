@@ -275,7 +275,9 @@ final class Requests {
 
         $params = !empty($queryParams) ? $queryParams : parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
 
-        $urlQueryParams = explode("&", $params);
+        parse_str($params, $urlQueryParams);
+
+        //$urlQueryParams = explode("&", $params);
 
         if (sizeof($urlQueryParams) > 0) {
             foreach ($urlQueryParams as $param) {
