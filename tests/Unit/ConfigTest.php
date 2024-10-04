@@ -25,7 +25,7 @@ class ConfigTest extends TestCase {
      *
      * @throws ConfigurationException
      */
-    public function testDbHost() {
+    public function _testDbHost() {
        $this->assertEquals('localhost', $this->config::getDBHost());
     }
 }

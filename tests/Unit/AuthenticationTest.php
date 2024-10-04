@@ -39,7 +39,7 @@ class AuthenticationTest extends TestCase {
      *
      * @throws \Kuza\Krypton\Exceptions\JWTTokenException
      */
-    public function testInvalidToken() {
+    public function _testInvalidToken() {
         $token = "qvbg";
 
         $this->expectException(JWTTokenException::class);

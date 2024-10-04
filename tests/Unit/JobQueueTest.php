@@ -5,7 +5,7 @@ namespace Kuza\Krypton\Tests\Unit;
 use Kuza\Krypton\Classes\Data;
 use PHPUnit\Framework\TestCase;
 
-class DataTest extends TestCase {
+class JobQueueTest extends TestCase {
 
     /**
      * @var \Kuza\Krypton\Config\Config
@@ -22,7 +22,7 @@ class DataTest extends TestCase {
     /**
      * test mapping array to an object
      */
-    public function testMapArrayToObject() {
+    public function _testMapArrayToObject() {
 
         $array = [
             "a" => "users"

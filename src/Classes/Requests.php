@@ -125,11 +125,7 @@ final class Requests {
         $this->uri = $this->getRequestUri();
 
         $this
-//            ->setURIParts()
             ->setRequestHeaders()
-//            ->setModule()
-//            ->setIdentifier()
-//            ->setOption()
             ->setQueryParameters()
             ->setMethod()
             ->setBody()
@@ -275,9 +271,9 @@ final class Requests {
 
         $params = !empty($queryParams) ? $queryParams : parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
 
-        parse_str($params, $urlQueryParams);
+        //parse_str($params, $filters);
 
-        //$urlQueryParams = explode("&", $params);
+        $urlQueryParams = explode("&", $params);
 
         if (sizeof($urlQueryParams) > 0) {
             foreach ($urlQueryParams as $param) {

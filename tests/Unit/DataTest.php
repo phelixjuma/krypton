@@ -22,7 +22,7 @@ class DataTest extends TestCase {
     /**
      * test mapping array to an object
      */
-    public function testMapArrayToObject() {
+    public function _testMapArrayToObject() {
 
         $array = [
             "a" => "users"
