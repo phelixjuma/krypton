@@ -951,7 +951,7 @@ class DBHandler {
 
             } catch(\PDOException $e) {
 
-                print "\nsql pdo exception: ".$e->getMessage().". Retries $try/".self::MAX_RETRIES."\n";
+                print "\nsql pdo exception: ".$e->getMessage().". Retries $try/".self::MAX_RETRIES." SQL: {$sql} PARAMS: ".json_encode($params)." VALUES: ".json_encode($values)."\n";
 
                 if (self::hasGoneAway($e)) {
                     // reconnect and continue to next iteration
