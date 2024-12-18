@@ -921,6 +921,8 @@ class DBHandler {
         $params = $selectSQL['params'];
         $values = $selectSQL['values'];
 
+        print "\nselect sql: $sql\n";
+
         $result = [];
 
         for ($try = 0; $try < self::MAX_RETRIES; $try++) {
@@ -958,10 +960,13 @@ class DBHandler {
                     $this->message = $e->getMessage();
                     break;
                 }
+            } catch (\Exception $e) {
+                $this->message = $e->getMessage();
+                break;
             }
         }
 
-        return ($this->recordsSelected > 0)? $result : null;
+        return ($this->recordsSelected > 0) ? $result : null;
     }
 
     /**
