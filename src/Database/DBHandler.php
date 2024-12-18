@@ -40,7 +40,7 @@ class DBHandler {
 
     private $connectionOptions = array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_PERSISTENT => true,
+        PDO::ATTR_PERSISTENT => false,
         PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
     );
 
@@ -88,24 +88,22 @@ class DBHandler {
 
         try {
 
-            if ($this->db_name !== null || !isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection'])) {
+            $app_env = Config::getSpecificConfig("APP_ENV");
 
-                $app_env = Config::getSpecificConfig("APP_ENV");
-
-                $host = Config::getDBHost();
-                $engine = Config::getDBEngine();
-                $port = Config::getDBPort();
-                $name = $app_env == "testing" ? Config::getSpecificConfig("DB_NAME_TESTING") : Config::getDBName();
-                if ($this->db_name !== null) {
-                    $name = $this->db_name;
-                }
-
-                $this->setSource($engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4");
-                $this->setUser(Config::getDBUser());
-                $this->setPassword(Config::getDBPassword());
-
-                $GLOBALS['pdoConnection'] = new \PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
+            $host = Config::getDBHost();
+            $engine = Config::getDBEngine();
+            $port = Config::getDBPort();
+            $name = $app_env == "testing" ? Config::getSpecificConfig("DB_NAME_TESTING") : Config::getDBName();
+            if ($this->db_name !== null) {
+                $name = $this->db_name;
             }
+
+            $this->setSource($engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4");
+            $this->setUser(Config::getDBUser());
+            $this->setPassword(Config::getDBPassword());
+
+            $this->pdo = new \PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
+
 
         } catch (\Exception $ex) {
             $title = 'Connection Failed';
@@ -118,10 +116,11 @@ class DBHandler {
                     break;
             }
             $response = json_encode(['message' => $message, 'title' => $title, 'status' => 'error']);
+
+            echo "\ndatabase connection error: ".json_encode($response)."\n";
+
             die($response);
         }
-
-        $this->pdo =  $GLOBALS['pdoConnection'];
     }
 
     /**
@@ -201,9 +200,7 @@ class DBHandler {
             $this->setUser(Config::getDBUser());
             $this->setPassword(Config::getDBPassword());
 
-            $GLOBALS['pdoConnection'] = new PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
-
-            $this->pdo = $GLOBALS['pdoConnection'];
+            $this->pdo = new PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
 
         } catch (\Exception $ex) {
             $title = 'Connection Failed';
@@ -230,7 +227,6 @@ class DBHandler {
      * @return void
      */
     public function disconnect() {
-        $GLOBALS['pdoConnection'] = null;
         $this->pdo = null;
     }
 
@@ -598,7 +594,7 @@ class DBHandler {
                 // If success, break the loop
                 break;
 
-            } catch (\PDOException $e) {
+            } catch (\PDOException $ex) {
                 // Check if the error is a connection issue (you might need to adjust error code)
                 if (self::hasGoneAway($ex)) {
                     // Try to reconnect
@@ -609,10 +605,19 @@ class DBHandler {
                     $this->recordsAffected=0;
                     $this->lastAffectedId=null;
                     $this->is_error=true;
-                    $this->message = "{$statement->errorInfo()[0]} {$statement->errorInfo()[1]} {$statement->errorInfo()[2]}";
+                    $this->message = "{$ex->getMessage()} {$statement->errorInfo()[0]} {$statement->errorInfo()[1]} {$statement->errorInfo()[2]}";
 
                     break;
                 }
+            } catch (\Exception $ex) {
+                // Check if the error is a connection issue (you might need to adjust error code)
+                // If it's a different error, throw it again
+                $this->recordsAffected=0;
+                $this->lastAffectedId=null;
+                $this->is_error=true;
+                $this->message = "{$ex->getMessage()} {$statement->errorInfo()[0]} {$statement->errorInfo()[1]} {$statement->errorInfo()[2]}";
+
+                break;
             }
         }
         return $this->recordsAffected;
@@ -949,26 +954,26 @@ class DBHandler {
                 // Success, we break out of the loop.
                 break;
 
-            } catch(\PDOException $e) {
+            } catch(\PDOException $ex) {
 
-                print "\nsql pdo exception: ".$e->getMessage().". Retries $try/".self::MAX_RETRIES." SQL: {$sql} PARAMS: ".json_encode($params)." VALUES: ".json_encode($values)."\n";
+                print "\nsql pdo exception: ".$ex->getMessage().". Retries $try/".self::MAX_RETRIES." SQL: {$sql} PARAMS: ".json_encode($params)." VALUES: ".json_encode($values)."\n";
 
-                if (self::hasGoneAway($e)) {
+                if (self::hasGoneAway($ex)) {
                     // reconnect and continue to next iteration
                     $this->reconnect();
                     continue;
                 } else {
                     // different error, set it and break out of loop.
                     $this->is_error = true;
-                    $this->message = $e->getMessage();
+                    $this->message = $ex->getMessage();
                     break;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception $ex) {
 
-                print "\nselect exception: ".$e->getMessage()."\n";
+                print "\nselect exception: ".$ex->getMessage()."\n";
 
                 $this->is_error = true;
-                $this->message = $e->getMessage();
+                $this->message = $ex->getMessage();
                 break;
             }
         }
@@ -1007,15 +1012,15 @@ class DBHandler {
 
                 break;
 
-            } catch (\PDOException $e) {
+            } catch (\PDOException $ex) {
 
-                if (self::hasGoneAway($e)) {
+                if (self::hasGoneAway($ex)) {
                     $this->reconnect();
                     continue;
                 } else {
 
                     $this->is_error = true;
-                    $this->message = $e->getMessage();
+                    $this->message = $ex->getMessage();
 
                     break;
                 }
