@@ -222,6 +222,8 @@ class DBHandler {
 
             $this->message = "Database reconnection error: ".$message;
 
+            echo "\ndatabase reconnection error: {$message}\n";
+
             die($response);
         }
 
@@ -926,7 +928,7 @@ class DBHandler {
 
         $result = [];
 
-        for ($try = 0; $try < self::MAX_RETRIES; $try++) {
+        for ($try = 0; $try <= self::MAX_RETRIES; $try++) {
 
             try {
 
@@ -952,7 +954,7 @@ class DBHandler {
 
             } catch(\PDOException $e) {
 
-                print "\nselect sql error: ".$e->getMessage().". Retries $try/".self::MAX_RETRIES."\n";
+                print "\nsql pdo exception: ".$e->getMessage().". Retries $try/".self::MAX_RETRIES."\n";
 
                 if (self::hasGoneAway($e)) {
                     // reconnect and continue to next iteration
@@ -966,7 +968,7 @@ class DBHandler {
                 }
             } catch (\Exception $e) {
 
-                print "\nselect sql error: ".$e->getMessage()."\n";
+                print "\nselect exception: ".$e->getMessage()."\n";
 
                 $this->is_error = true;
                 $this->message = $e->getMessage();
