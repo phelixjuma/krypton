@@ -921,8 +921,6 @@ class DBHandler {
         $params = $selectSQL['params'];
         $values = $selectSQL['values'];
 
-        print "\nselect sql: $sql\n";
-
         $result = [];
 
         for ($try = 0; $try < self::MAX_RETRIES; $try++) {
@@ -930,12 +928,16 @@ class DBHandler {
             try {
 
 
+                print "\nselect sql: $sql. params: ".json_encode($params)." values: ".json_encode($values)."\n";
+
                 // get the records
                 $statement=$this->createStatement($sql,$params,$values);
 
                 $statement->execute();
                 $result = $statement->fetchAll(PDO::FETCH_ASSOC);
                 $this->recordsSelected = $statement->rowCount();
+
+                print "\nselect sql results: ".json_encode($result)."\n";
 
                 // count the records
                 if ($count) {
@@ -950,6 +952,8 @@ class DBHandler {
 
             } catch(\PDOException $e) {
 
+                print "\nselect sql error: ".$e->getMessage()."\n";
+
                 if (self::hasGoneAway($e)) {
                     // reconnect and continue to next iteration
                     $this->reconnect();
@@ -961,6 +965,10 @@ class DBHandler {
                     break;
                 }
             } catch (\Exception $e) {
+
+                print "\nselect sql error: ".$e->getMessage()."\n";
+
+                $this->is_error = true;
                 $this->message = $e->getMessage();
                 break;
             }
