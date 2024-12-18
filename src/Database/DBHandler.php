@@ -187,26 +187,23 @@ class DBHandler {
 
         try {
 
-            if ($this->db_name !== null || !isset($GLOBALS['pdoConnection']) || is_null($GLOBALS['pdoConnection'])) {
+            $app_env = Config::getSpecificConfig("APP_ENV");
 
-                $app_env = Config::getSpecificConfig("APP_ENV");
-
-                $host = Config::getDBHost();
-                $engine = Config::getDBEngine();
-                $port = Config::getDBPort();
-                $name = $app_env == "testing" ? Config::getSpecificConfig("DB_NAME_TESTING") : Config::getDBName();
-                if ($this->db_name !== null) {
-                    $name = $this->db_name;
-                }
-
-                $this->setSource($engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4");
-                $this->setUser(Config::getDBUser());
-                $this->setPassword(Config::getDBPassword());
-
-                $GLOBALS['pdoConnection'] = new PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
-
-                $this->pdo = $GLOBALS['pdoConnection'];
+            $host = Config::getDBHost();
+            $engine = Config::getDBEngine();
+            $port = Config::getDBPort();
+            $name = $app_env == "testing" ? Config::getSpecificConfig("DB_NAME_TESTING") : Config::getDBName();
+            if ($this->db_name !== null) {
+                $name = $this->db_name;
             }
+
+            $this->setSource($engine . ":host=" . $host . ";port=" . $port . ";dbname=" . $name. ";charset=utf8mb4");
+            $this->setUser(Config::getDBUser());
+            $this->setPassword(Config::getDBPassword());
+
+            $GLOBALS['pdoConnection'] = new PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
+
+            $this->pdo = $GLOBALS['pdoConnection'];
 
         } catch (\Exception $ex) {
             $title = 'Connection Failed';
