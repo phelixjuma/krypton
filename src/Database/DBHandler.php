@@ -219,6 +219,9 @@ class DBHandler {
                     break;
             }
             $response = json_encode(['message' => $message, 'title' => $title, 'status' => 'error']);
+
+            $this->message = "Database reconnection error: ".$message;
+
             die($response);
         }
 
@@ -949,7 +952,7 @@ class DBHandler {
 
             } catch(\PDOException $e) {
 
-                print "\nselect sql error: ".$e->getMessage()."\n";
+                print "\nselect sql error: ".$e->getMessage().". Retries $try/".self::MAX_RETRIES."\n";
 
                 if (self::hasGoneAway($e)) {
                     // reconnect and continue to next iteration
