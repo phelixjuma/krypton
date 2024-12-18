@@ -102,7 +102,7 @@ class DBHandler {
             $this->setUser(Config::getDBUser());
             $this->setPassword(Config::getDBPassword());
 
-            $this->pdo = new \PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
+            $this->pdo = new \PDO($this->getDatabaseSource(), $this->getDatabaseUser(), $this->getDatabasePassword(), $this->getConnectionOptions());
 
 
         } catch (\Exception $ex) {
@@ -153,21 +153,21 @@ class DBHandler {
     /**
      * @return mixed
      */
-    public function getSource() {
+    public function getDatabaseSource() {
         return $this->source;
     }
 
     /**
      * @return mixed
      */
-    public function getUser() {
+    public function getDatabaseUser() {
         return $this->user;
     }
 
     /**
      * @return mixed
      */
-    public function getPassword() {
+    public function getDatabasePassword() {
         return $this->password;
     }
 
@@ -200,7 +200,7 @@ class DBHandler {
             $this->setUser(Config::getDBUser());
             $this->setPassword(Config::getDBPassword());
 
-            $this->pdo = new PDO($this->getSource(), $this->getUser(), $this->getPassword(), $this->getConnectionOptions());
+            $this->pdo = new PDO($this->getDatabaseSource(), $this->getDatabaseUser(), $this->getDatabasePassword(), $this->getConnectionOptions());
 
         } catch (\Exception $ex) {
             $title = 'Connection Failed';
