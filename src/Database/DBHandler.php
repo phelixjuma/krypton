@@ -927,9 +927,6 @@ class DBHandler {
 
             try {
 
-
-                print "\nselect sql: $sql. params: ".json_encode($params)." values: ".json_encode($values)."\n";
-
                 // get the records
                 $statement=$this->createStatement($sql,$params,$values);
 
@@ -937,7 +934,7 @@ class DBHandler {
                 $result = $statement->fetchAll(PDO::FETCH_ASSOC);
                 $this->recordsSelected = $statement->rowCount();
 
-                print "\nselect sql results: ".json_encode($result)."\n";
+                print "\nselect sql: $sql. params: ".json_encode($params)." values: ".json_encode($values)." results: ".json_encode($result)."\n";
 
                 // count the records
                 if ($count) {
