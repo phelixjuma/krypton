@@ -117,8 +117,6 @@ class DBHandler {
             }
             $response = json_encode(['message' => $message, 'title' => $title, 'status' => 'error']);
 
-            echo "\ndatabase connection error: ".json_encode($response)."\n";
-
             die($response);
         }
     }
@@ -215,8 +213,6 @@ class DBHandler {
             $response = json_encode(['message' => $message, 'title' => $title, 'status' => 'error']);
 
             $this->message = "Database reconnection error: ".$message;
-
-            echo "\ndatabase reconnection error: {$message}\n";
 
             die($response);
         }
@@ -941,8 +937,6 @@ class DBHandler {
                 $result = $statement->fetchAll(PDO::FETCH_ASSOC);
                 $this->recordsSelected = $statement->rowCount();
 
-                print "\nselect sql: $sql. params: ".json_encode($params)." values: ".json_encode($values)." results: ".json_encode($result)."\n";
-
                 // count the records
                 if ($count) {
                     $count_statement=$this->createStatement($count_sql,$params,$values);
@@ -956,8 +950,6 @@ class DBHandler {
 
             } catch(\PDOException $ex) {
 
-                print "\nsql pdo exception: ".$ex->getMessage().". Retries $try/".self::MAX_RETRIES." SQL: {$sql} PARAMS: ".json_encode($params)." VALUES: ".json_encode($values)."\n";
-
                 if (self::hasGoneAway($ex)) {
                     // reconnect and continue to next iteration
                     $this->reconnect();
@@ -969,8 +961,6 @@ class DBHandler {
                     break;
                 }
             } catch (\Exception $ex) {
-
-                print "\nselect exception: ".$ex->getMessage()."\n";
 
                 $this->is_error = true;
                 $this->message = $ex->getMessage();
