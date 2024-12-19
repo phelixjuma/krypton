@@ -335,7 +335,7 @@ final class App {
         SimpleRouter::setDefaultNamespace("\Kuza\Krypton\Framework\\".$this->controllers_directory);
 
         // Add our container to simple-router and enable dependency injection
-        SimpleRouter::enableDependencyInjection($this->DIContainer);
+        //SimpleRouter::enableDependencyInjection($this->DIContainer);
 
         // Start the routing
         SimpleRouter::start();
