@@ -181,6 +181,11 @@ final class Data {
      * @return array
      */
     public static function makeUnique(array $data) {
+
+        if (empty($data) || !is_array($data)) {
+            return $data;
+        }
+
         $final = array();
         foreach ($data as $array) {
             if (!in_array($array, $final)) {
@@ -196,6 +201,9 @@ final class Data {
      * @return array
      */
     public static function makeAssociativeArrayUnique($array) {
+        if (empty($array) || !is_array($array)) {
+            return $array;
+        }
         return array_map("unserialize", array_unique(array_map("serialize", $array)));
 
     }
