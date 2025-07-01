@@ -200,7 +200,7 @@ final class Data {
      * @param $array
      * @return array
      */
-    public static function makeAssociativeArrayUnique_old($array) {
+    public static function makeAssociativeArrayUnique($array) {
         if (empty($array) || !is_array($array)) {
             return $array;
         }
@@ -208,7 +208,7 @@ final class Data {
 
     }
 
-    public static function makeAssociativeArrayUnique(array &$array): void {
+    public static function makeAssociativeArrayUniqueInPlace(array &$array): void {
         $seen = [];
     
         foreach ($array as $key => $item) {

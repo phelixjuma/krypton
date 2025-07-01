@@ -200,37 +200,13 @@ final class Data {
      * @param $array
      * @return array
      */
-    public static function makeAssociativeArrayUnique_old($array) {
+    public static function makeAssociativeArrayUnique($array) {
         if (empty($array) || !is_array($array)) {
             return $array;
         }
         return array_map("unserialize", array_unique(array_map("serialize", $array)));
 
     }
-
-    public static function makeAssociativeArrayUnique(array &$array): void {
-        $seen = [];
-    
-        foreach ($array as $key => $item) {
-            if (!is_array($item)) {
-                // simple scalar: cast to string for fingerprint
-                $hash = (string)$item;
-            } else {
-                // normalize key order for consistent hashing
-                ksort($item);
-                $hash = md5(serialize($item));
-            }
-    
-            if (isset($seen[$hash])) {
-                // duplicate: remove it from the original array
-                unset($array[$key]);
-            } else {
-                // first time we see this fingerprint
-                $seen[$hash] = true;
-            }
-        }
-    }
-    
 
     /**
      * Format mobile phone numbers. All phone numbers must start with the country code

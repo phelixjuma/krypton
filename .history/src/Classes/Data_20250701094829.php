@@ -200,7 +200,7 @@ final class Data {
      * @param $array
      * @return array
      */
-    public static function makeAssociativeArrayUnique_old($array) {
+    public static function makeAssociativeArrayUnique_($array) {
         if (empty($array) || !is_array($array)) {
             return $array;
         }
